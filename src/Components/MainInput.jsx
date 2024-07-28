@@ -93,7 +93,7 @@ function MainInput() {
                   Reply
                 </button>
               </p>
-              <Replies />
+              <Replies id={blog.id} />
             </div>
           ))}
         </div>

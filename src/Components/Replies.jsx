@@ -1,15 +1,19 @@
 import { useState, useContext } from "react";
 import BlogContext from "../Store/StoreInput";
-function Replies() {
-  const [replyInputs, setReplyInputs] = useState("");
-  const { replyClick, editReply } = useContext(BlogContext);
+function Replies({ blogID }) {
+  console.log(blogID);
+  const [replyInputs, setReplyInputs] = useState([]);
+  const { replyClick, editReply, addReplies, blogs } = useContext(BlogContext);
+  console.log(blogs);
   function handleInputReply(e) {
     setReplyInputs(e.target.value);
   }
   const handleOnClickReply = (valuee) => {
     editReply(valuee);
   };
-  const handleSendRepliesData = () => {};
+  const handleSendRepliesData = () => {
+    addReplies({ tasks: replyInputs, BlogReplyId: blogID });
+  };
   return (
     <>
       <div>

@@ -30,6 +30,8 @@ function projectBlogUseReducer(state, action) {
       replyClick: updateReply,
     };
   }
+  if (action.type === "ADD-REPLIES") {
+  }
 
   return {
     ...state,
@@ -58,9 +60,10 @@ export function ProjectContext({ children }) {
       editReply: valuee,
     });
   }
-  const addReplies = () => {
+  const addReplies = (repliesData) => {
     setProjectDispatch({
       type: "ADD-REPLIES",
+      repliesData: { ...repliesData },
     });
   };
   const blogsData = {
