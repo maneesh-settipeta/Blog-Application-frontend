@@ -16,6 +16,7 @@ function projectBlogUseReducer(state, action) {
     const newBlog = {
       ...action.blogDetails,
       id: newID,
+      replies: [],
     };
     return {
       ...state,
@@ -31,11 +32,52 @@ function projectBlogUseReducer(state, action) {
     };
   }
   if (action.type === "ADD-REPLIES") {
+    alert("add-replies");
+
+    // const replyData = action.repliesData;
+    // const Blog = state.blogs.findIndex(
+    //   (blog) => blog.id === action.repliesData.blogID
+    // );
+
+    // const updatedBlog = {
+    //   ...state.blogs[Blog],
+    //   replies: [...state.blogs[Blog].replies, action.repliesData.blogRepliess],
+    // };
+    // const updatedBlogs = [
+    //   ...state.blogs.slice(0, Blog),
+    //   updatedBlog,
+    //   ...state.blogs.slice(Blog + 1),
+    // ];
+
+    // return {
+    //   ...state,
+    //   blogs: updatedBlogs,
+    // };
+
+    const blogIndex = state.blogs.findIndex((blog) => {
+      return blog.id === action.repliesData.blogID;
+    });
+    const allBlogs = [...state.blogs];
+    console.log(allBlogs);
+
+    const existingBlog = state.blogs[blogIndex];
+    console.log(existingBlog);
+
+    existingBlog.replies.push(action.repliesData.blogRepliess);
+    console.log(existingBlog);
+    allBlogs[blogIndex] = existingBlog;
+    console.log(allBlogs);
+
+    return { ...state, blogs: allBlogs };
+
+    // const updatedBlogs = state.blogs.map((blog) =>
+    //   blog.id === replyData.blogID
+    //     ? { ...blog, replies: [...blog.replies, replyData.blogRepliess] }
+    //     : blog
+    // );
   }
 
-  return {
-    ...state,
-  };
+  return state;
 }
 
 export function ProjectContext({ children }) {
@@ -73,7 +115,7 @@ export function ProjectContext({ children }) {
     editReply,
     addReplies,
   };
-  console.log(projectStateReducer.blogs);
+
   return (
     <BlogContext.Provider value={blogsData}>{children}</BlogContext.Provider>
   );

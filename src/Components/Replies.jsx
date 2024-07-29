@@ -1,7 +1,6 @@
 import { useState, useContext } from "react";
 import BlogContext from "../Store/StoreInput";
-function Replies({ blogID }) {
-  console.log(blogID);
+function Replies({ id }) {
   const [replyInputs, setReplyInputs] = useState([]);
   const { replyClick, editReply, addReplies, blogs } = useContext(BlogContext);
   console.log(blogs);
@@ -11,8 +10,10 @@ function Replies({ blogID }) {
   const handleOnClickReply = (valuee) => {
     editReply(valuee);
   };
+
   const handleSendRepliesData = () => {
-    addReplies({ tasks: replyInputs, BlogReplyId: blogID });
+    addReplies({ blogRepliess: replyInputs, blogID: id });
+    setReplyInputs("");
   };
   return (
     <>
@@ -40,7 +41,6 @@ function Replies({ blogID }) {
             </button>
           </div>
         ) : null}
-        <div></div>
       </div>
     </>
   );
