@@ -4,13 +4,11 @@ import Header from "./Header";
 function Home() {
   return (
     <>
-      <div>
+      <div className="sticky top-0 z-50 bg-white">
         <Header />
       </div>
-      <div>
-        {" "}
-        <Outlet />
-      </div>
+      {/* <div className="flex justify-center"> */} <Outlet />
+      {/* </div> */}
     </>
   );
 }
