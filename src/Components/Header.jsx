@@ -26,11 +26,11 @@ function Header() {
   const secondNameExtract = userDetails?.lastName[0] || "";
   return (
     <>
-      <div className="pl-6 pt-4 pb-4 text-5xl font-bold border-b border-black mb-3 flex justify-between ">
+      <div className="pl-6 pt-4 pb-4 text-5xl text-white font-bold border-b border-black mb-3 flex justify-between ">
         <Link to="/blogs">
           <h1 className="font-sans"> Blogs</h1>
         </Link>
-        <h1 className="rounded-full font-medium text-2xl p-4 bg-rose-400 mr-5 ">
+        <h1 className="rounded-full font-medium text-2xl p-4 bg-customcolorred mr-5 ">
           {firstNameExtract + secondNameExtract}
         </h1>
       </div>

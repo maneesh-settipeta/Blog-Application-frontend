@@ -145,7 +145,7 @@ function MainInput() {
               />
               <div className="flex justify-center mt-3">
                 <button
-                  className="p-2 bg-rose-600 text-gray-50 rounded-md"
+                  className="p-2 bg-customcolorred text-gray-50 rounded-md"
                   onClick={handlesendData}
                 >
                   Submit
@@ -174,7 +174,7 @@ function MainInput() {
                     <div className="flex flex-col">
                       <p>
                         <button
-                          className="font-sans text-lg  text-white bg-rose-600 p-2 rounded-md ml-4 mb-1 mt-4 font-semibold "
+                          className="font-sans text-lg  text-white bg-customcolorred p-2 rounded-md ml-4 mb-1 mt-4 font-semibold "
                           onClick={() => handleShowInput(blog.id)}
                         >
                           {" "}

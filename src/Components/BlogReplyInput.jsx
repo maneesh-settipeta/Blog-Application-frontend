@@ -38,7 +38,7 @@ function BlogReplyInput({ id, sendOnClick, replyOnClick }) {
           </button>
           <button
             onClick={handleSendRepliesData}
-            className="p-2 ml-2  bg-rose-600 text-gray-50 rounded-md"
+            className="p-2 ml-2  bg-customcolorred text-gray-50 rounded-md"
           >
             Reply
           </button>
