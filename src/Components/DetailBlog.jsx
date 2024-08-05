@@ -15,13 +15,14 @@ function DetailBlog() {
     <>
       <div className="flex justify-center">
         <div className="w-1/3">
-          <h1 className="p-4 font-medium text-5xl text-left">
+          <h1 className="p-4 font-medium text-4xl text-left text-customColors underline">
             {findBlog?.userTitle}
           </h1>
           <p className="p-4 font-medium text-2xl text-left ">
-            Description: {findBlog?.userinput}
+            <span className=" underline">Description:</span>{" "}
+            {findBlog?.userinput}
           </p>
-          <h1 className="pl-4 pt-3 pb-1 text-lg font-medium text-red-600 underline">
+          <h1 className="pl-4 pt-3 pb-1 text-lg font-medium text-customcolorred underline">
             Replies:
           </h1>
           {findBlog.replies &&

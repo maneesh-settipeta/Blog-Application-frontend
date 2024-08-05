@@ -113,13 +113,13 @@ function MainInput() {
   return (
     <>
       <button
-        className="flex underline mb-2  font-serif text-3xl  text-start ml-6"
+        className="flex underline mb-2 text-customColor font-serif text-3xl  text-start ml-6"
         onClick={handleToggleInputs}
       >
         Post Blog
       </button>
       <div className="flex justify-center">
-        <div className="w-full md:w-1/2 px-4">
+        <div className="w-full md:w-1/2 px-4 ">
           {currentState.toggleInput ? (
             <div>
               <p className="font-serif text-2xl text-gray-950 mt-5   ">Title</p>
@@ -128,7 +128,7 @@ function MainInput() {
                 type="text"
                 onChange={handleTitleInput}
                 value={currentState.inputTitle}
-                className="border w-full  border-black rounded-md h-10 mt-1  p-2  focus:outline-none"
+                className="border w-full  border-black rounded-md outline-none h-10 mt-1  p-2  focus:outline-none"
                 placeholder="Enter Title"
               />
 
@@ -140,12 +140,12 @@ function MainInput() {
                 type="text"
                 onChange={handleInput}
                 value={currentState.inputValue}
-                className="border w-full border-black rounded-md h-40 p-2 mt-1 "
+                className="border w-full border-black rounded-md  outline-none h-40 p-2 mt-1 "
                 placeholder="please type here"
               />
               <div className="flex justify-center mt-3">
                 <button
-                  className="p-2 bg-customcolorred text-gray-50 rounded-md"
+                  className="p-2 bg-customcolorred outline-none text-gray-50 rounded-md"
                   onClick={handlesendData}
                 >
                   Submit
@@ -155,7 +155,9 @@ function MainInput() {
             </div>
           ) : null}
           <div className="flex-col justify-center mt-10 ">
-            <h1 className=" text-4xl mb-6 font-bold ">Conversations</h1>
+            <h1 className=" text-4xl text-customColor  mb-6 font-bold ">
+              Conversations
+            </h1>
             {blogs &&
               blogs?.map((blog) => {
                 return (
@@ -208,10 +210,10 @@ function MainInput() {
                         replyOnClick={handleReplyClick}
                       />
                     )}
-                    <p className="flex justify-end p-2 text-lg ">
+                    <p className="flex justify-end p-2 text-lg  font-medium text-customcolorred">
                       {userDetails?.firstName + " " + userDetails?.lastName}
                     </p>
-                    <p className="flex justify-end p-2 text-base">
+                    <p className="flex justify-end p-2 text-base font-medium text-customColor">
                       Created on: {blog.dateCreated}
                     </p>
                   </div>

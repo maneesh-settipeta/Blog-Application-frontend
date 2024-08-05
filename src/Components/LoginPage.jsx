@@ -30,13 +30,16 @@ function LoginPage() {
 
   return (
     <>
-      <div className="bg-slate-200 h-screen flex items-center justify-center">
-        <div className="bg-[#f7f7f7] p-7 rounded-md border border-black">
+      <div className="bg-customColor h-screen flex items-center justify-center">
+        <div className="bg-[#f7f7f7] p-7 rounded-md border  w-1/4 h-1/2">
           <div>
             <p className="flex flex-col py-2">
-              <label className="text-1xl font-medium"> Email</label>
+              <label className="text-2xl font-medium text-customColor">
+                {" "}
+                Email
+              </label>
               <input
-                className="max-w-fit p-3 border border-black outline-none rounded-md"
+                className="max-h-full p-3 border outline-none rounded-md"
                 ref={userId}
                 placeholder="Please Enter your ID"
               ></input>
@@ -44,10 +47,12 @@ function LoginPage() {
           </div>
           <div>
             <p className="flex flex-col py-2">
-              <label className="text-1xl font-medium">Password</label>
+              <label className="text-2xl font-medium text-customColor">
+                Password
+              </label>
               <input
                 type="password"
-                className="max-w-fit p-3 border border-black outline-none rounded-md"
+                className="max-h-full p-3 border outline-none rounded-md"
                 ref={userPassword}
                 placeholder="Please Enter Password"
               ></input>
@@ -55,17 +60,19 @@ function LoginPage() {
           </div>
           <div className="flex justify-end">
             <button
-              className="bg-cyan-400 p-2 text-gray-350 text-lg hover:font-medium rounded-md hover:text-black hover:shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out"
+              className="bg-customcolorred p-2 text-white text-lg mt-5 hover:font-medium outline-none rounded-md hover:text-black hover:shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out"
               onClick={handleUserLogin}
             >
               Sign-In
             </button>
           </div>
-          <Link to="/SignUp">
-            <button className="text-base mt-2 font-medium underline">
-              Dont have an Account Sign-Up!
-            </button>
-          </Link>
+          <div className="flex justify-center mt-8">
+            <Link to="/SignUp">
+              <button className="text-base mt-2 font-medium text-customColor  underline">
+                Dont have an Account Sign-Up!
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
       {/* <ToastContainer /> */}
