@@ -13,8 +13,6 @@ function Header() {
       const docData = await getDoc(docref);
       if (docData.exists()) {
         setUserDetails(docData.data());
-      } else {
-        console.log("User details not fetched");
       }
     });
   };
@@ -30,9 +28,9 @@ function Header() {
         <Link to="/blogs">
           <h1 className="font-sans"> Blogs</h1>
         </Link>
-        <h1 className="rounded-full font-medium text-2xl p-4 bg-customcolorred mr-5 ">
+        <button className="rounded-full font-medium text-2xl p-4 bg-customcolorred mr-7 ">
           {firstNameExtract + secondNameExtract}
-        </h1>
+        </button>
       </div>
     </>
   );

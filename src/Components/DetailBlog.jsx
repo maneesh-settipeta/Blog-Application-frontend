@@ -6,10 +6,8 @@ function DetailBlog() {
 
   const { state } = useLocation();
   const blogID = state.blogid;
-  console.log(state.blogid);
 
-  const findBlog = blogs.find((blog) => blog.id === blogID);
-  console.log(findBlog);
+  const findBlog = blogs.find((blog) => blog.blogID === blogID);
 
   return (
     <>

@@ -10,23 +10,34 @@ const BlogContext = createContext({
   editReply: () => {},
   addReplies: () => {},
   checkUser: () => {},
+  // blukBlogAdd: () => {},
 });
 
 function projectBlogUseReducer(state, action) {
-  // console.log("test", action.blogDetails);
+  console.log(action.blogDetails);
+
   if (action.type === "ADD-BLOG") {
     const newBlog = {
       ...action.blogDetails,
-      replies: [],
     };
+    // console.log(...action.blogDetails);
+
     return {
       ...state,
       blogs: [...state.blogs, newBlog],
     };
   }
+
+  if (action.type === "ADD-BULK-BLOG") {
+    return {
+      ...state,
+      blogs: [...action.blogDetails],
+    };
+  }
+
   if (action.type === "ADD-REPLIES") {
     const Blog = state.blogs.findIndex(
-      (blog) => blog.id === action.repliesData.blogID
+      (blog) => blog.blogID === action.repliesData.id
     );
 
     const updatedBlog = {
@@ -62,6 +73,12 @@ export function ProjectContext({ children }) {
       blogDetails: { ...blogData },
     });
   }
+  // function blukBlogAdd(blogData) {
+  //   setProjectDispatch({
+  //     type: "ADD-BULK-BLOG",
+  //     blogDetails: { ...blogData },
+  //   });
+  // }
 
   const addReplies = (repliesData) => {
     setProjectDispatch({
@@ -75,6 +92,7 @@ export function ProjectContext({ children }) {
     replyCheckForTrue: projectStateReducer.replyCheckForTrue,
     addBlog,
     addReplies,
+    // blukBlogAdd,
   };
 
   return (

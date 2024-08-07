@@ -1,8 +1,12 @@
 import { useState, useContext } from "react";
 import BlogContext from "../Store/StoreInput";
-function BlogReplyInput({ id, sendOnClick, replyOnClick }) {
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { db } from "../firebase";
+function BlogReplyInput({ id, sendOnClick, replyOnClick, sendFirebaseId }) {
   const [replyInputs, setReplyInputs] = useState([]);
   const { addReplies } = useContext(BlogContext);
+  console.log(id);
+  const dateCreatedReplies = new Date().toLocaleString;
 
   function handleInputReply(e) {
     setReplyInputs(e.target.value);
@@ -11,8 +15,15 @@ function BlogReplyInput({ id, sendOnClick, replyOnClick }) {
     sendOnClick(id);
   };
 
-  const handleSendRepliesData = () => {
-    addReplies({ blogRepliess: replyInputs, blogID: id });
+  const handleSendRepliesData = async () => {
+    console.log(id);
+
+    const blogDocRef = doc(db, "blogs", sendFirebaseId);
+
+    await updateDoc(blogDocRef, {
+      replies: arrayUnion(replyInputs),
+    });
+    addReplies({ blogRepliess: replyInputs, id: id });
     setReplyInputs("");
     replyOnClick;
   };

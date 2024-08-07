@@ -5,7 +5,14 @@ import ReplyDiscription from "./ReplyDiscription";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { auth, db } from "../firebase";
-import { doc, getDoc, addDoc, collection } from "firebase/firestore";
+import {
+  doc,
+  getDocs,
+  getDoc,
+  query,
+  addDoc,
+  collection,
+} from "firebase/firestore";
 
 function MainInput() {
   const currentDate = new Date().toLocaleString();
@@ -23,6 +30,8 @@ function MainInput() {
   });
 
   const [userDetails, setUserDetails] = useState(null);
+  // const [blogs, setbloggs] = useState([]);
+  console.log(userDetails);
 
   const fetchData = async () => {
     auth.onAuthStateChanged(async (user) => {
@@ -30,14 +39,23 @@ function MainInput() {
       const docData = await getDoc(docref);
       if (docData.exists()) {
         setUserDetails(docData.data());
-      } else {
-        console.log("User is not logged in");
       }
     });
+    const q = query(collection(db, "blogs"));
+    const querySnapshot = await getDocs(q);
+    const blogsData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      data: doc.data(),
+    }));
+    console.log(blogsData);
+    // setbloggs(blogsData);
+    blogsData.forEach((blog) => addBlog(blog));
   };
+  console.log(blogs);
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [blogs, fetchData()]);
 
   const handleInput = (e) => {
     const inputText = e.target.value;
@@ -66,18 +84,19 @@ function MainInput() {
       userTitle: currentState.inputTitle,
       userinput: currentState.inputValue,
       dateCreated: currentDate,
-      id: newID,
+      blogID: userDetails.firstName + newID,
+      firstName: userDetails.firstName,
+      lastName: userDetails.lastName,
+      replies: [],
     };
     const docRef = await addDoc(collection(db, "blogs"), newBlogDetails);
     const newBlog = { ...newBlogDetails, id: docRef.id };
     addBlog(newBlog);
+    console.log(newBlog);
+
     currentState.inputTitle = "";
     currentState.inputValue = "";
-    setCurrentState({
-      inputTitle: "",
-      inputValue: "",
-      uniqueID: newID,
-    });
+    currentState.uniqueID = newID;
   };
   const handleShowInput = (id) => {
     setCurrentState((prevState) => ({
@@ -85,9 +104,9 @@ function MainInput() {
       showInputField: id,
     }));
   };
-  const handleCancelButton = (id) => {
+  const handleCancelButton = (blogID) => {
     setCurrentState((prevState) => {
-      if (prevState.showInputField === id) {
+      if (prevState.showInputField === blogID) {
         return {
           ...prevState,
           showInputField: null,
@@ -96,10 +115,10 @@ function MainInput() {
       return prevState;
     });
   };
-  const handleShowReplies = (id) => {
+  const handleShowReplies = (blogID) => {
     setCurrentState((prevState) => ({
       ...prevState,
-      blogReplies: id,
+      blogReplies: blogID,
       sendBlogRepliesButtonStatus: !prevState.sendBlogRepliesButtonStatus,
     }));
   };
@@ -110,16 +129,17 @@ function MainInput() {
       showReplies: !prevState.showReplies,
     }));
   };
+
   return (
     <>
-      <button
-        className="flex underline mb-2 text-customColor font-serif text-3xl  text-start ml-6"
-        onClick={handleToggleInputs}
-      >
-        Post Blog
-      </button>
       <div className="flex justify-center">
         <div className="w-full md:w-1/2 px-4 ">
+          <button
+            className="flex underline mb-2 text-customColor font-serif text-3xl  text-start "
+            onClick={handleToggleInputs}
+          >
+            {currentState.toggleInput ? "Write a post" : "Post Blog+"}
+          </button>
           {currentState.toggleInput ? (
             <div>
               <p className="font-serif text-2xl text-gray-950 mt-5   ">Title</p>
@@ -163,9 +183,12 @@ function MainInput() {
                 return (
                   <div
                     className="w-full h-auto border  mb-2 mt-2 rounded-md  border-black  p-4"
-                    key={blog.id}
+                    key={blog.blogID + blog.firstName + blog.dateCreated}
                   >
-                    <Link to={`:blogid=${blog.id}`} state={{ blogid: blog.id }}>
+                    <Link
+                      to={`:blogid=${blog.blogID}`}
+                      state={{ blogid: blog.blogID }}
+                    >
                       <h1 className="pl-4 font-serif text-3xl p-2 ">
                         {blog.userTitle}
                       </h1>
@@ -177,7 +200,7 @@ function MainInput() {
                       <p>
                         <button
                           className="font-sans text-lg  text-white bg-customcolorred p-2 rounded-md ml-4 mb-1 mt-4 font-semibold "
-                          onClick={() => handleShowInput(blog.id)}
+                          onClick={() => handleShowInput(blog.blogID)}
                         >
                           {" "}
                           Reply
@@ -185,33 +208,33 @@ function MainInput() {
                       </p>
                       <p>
                         <button
-                          className="font-sans text-lg  text-black p-1 rounded-md ml-3 mb-2 underline mt-1 font-semibold "
-                          onClick={() => handleShowReplies(blog.id)}
+                          className="font-sans text-lg  text-black p-1 rounded-md ml-3 mb-2  mt-1 font-semibold "
+                          onClick={() => handleShowReplies(blog.blogID)}
                         >
-                          {" "}
-                          Replies
+                          Replies {/* Replies ({handleReplyCount(blog.id)}) */}
                         </button>
                       </p>
                     </div>
                     {currentState.sendBlogRepliesButtonStatus &&
-                      currentState.blogReplies === blog.id && (
+                      currentState.blogReplies === blog.blogID && (
                         <ReplyDiscription
-                          sendId={blog.id}
+                          sendId={blog.blogID}
                           sendBlogRepliesButtonStatus={
                             currentState.sendBlogRepliesButtonStatus
                           }
                         />
                       )}
 
-                    {currentState.showInputField === blog.id && (
+                    {currentState.showInputField === blog.blogID && (
                       <BlogReplyInput
-                        id={blog.id}
+                        id={blog.blogID}
+                        sendFirebaseId={blog.id}
                         sendOnClick={handleCancelButton}
                         replyOnClick={handleReplyClick}
                       />
                     )}
                     <p className="flex justify-end p-2 text-lg  font-medium text-customcolorred">
-                      {userDetails?.firstName + " " + userDetails?.lastName}
+                      {blog?.firstName + " " + blog?.lastName}
                     </p>
                     <p className="flex justify-end p-2 text-base font-medium text-customColor">
                       Created on: {blog.dateCreated}

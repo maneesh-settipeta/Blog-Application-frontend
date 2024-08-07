@@ -30,11 +30,8 @@ function SignUp() {
         email: email,
         password: password,
       });
-
-      alert("User signed up successfully!");
     } catch (error) {
       console.error("Error signing up: ", error);
-      alert("Error signing up: " + error.message);
     }
   }
   return (
