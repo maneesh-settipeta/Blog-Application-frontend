@@ -1,22 +1,34 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import BlogContext from "../Store/StoreInput";
 import BlogReplyInput from "./BlogReplyInput";
 import ReplyDiscription from "./ReplyDiscription";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
-import { auth, db } from "../firebase";
-import {
-  doc,
-  getDocs,
-  getDoc,
-  query,
-  addDoc,
-  collection,
-} from "firebase/firestore";
+import fetchBlogs from "../fetchBlogs";
+import { db } from "../firebase";
+import { addDoc, collection } from "firebase/firestore";
+import { updateDoc, doc } from "firebase/firestore";
+import Shimmer from "./Shimmer";
 
 function MainInput() {
   const currentDate = new Date().toLocaleString();
-  const { addBlog, blogs } = useContext(BlogContext);
+  const {
+    bulkBlog,
+    addBlog,
+    blogs,
+    currentUserFirstName,
+    currentUserLastName,
+  } = useContext(BlogContext);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getBlogs = async () => {
+      const responseData = await fetchBlogs();
+      bulkBlog(responseData);
+      setLoading(false);
+    };
+    getBlogs();
+  }, []);
 
   const [currentState, setCurrentState] = useState({
     inputTitle: "",
@@ -28,34 +40,6 @@ function MainInput() {
     toggleInput: false,
     sendBlogRepliesButtonStatus: false,
   });
-
-  const [userDetails, setUserDetails] = useState(null);
-  // const [blogs, setbloggs] = useState([]);
-  console.log(userDetails);
-
-  const fetchData = async () => {
-    auth.onAuthStateChanged(async (user) => {
-      const docref = doc(db, "users", user.uid);
-      const docData = await getDoc(docref);
-      if (docData.exists()) {
-        setUserDetails(docData.data());
-      }
-    });
-    const q = query(collection(db, "blogs"));
-    const querySnapshot = await getDocs(q);
-    const blogsData = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      data: doc.data(),
-    }));
-    console.log(blogsData);
-    // setbloggs(blogsData);
-    blogsData.forEach((blog) => addBlog(blog));
-  };
-  console.log(blogs);
-
-  useEffect(() => {
-    fetchData();
-  }, [blogs, fetchData()]);
 
   const handleInput = (e) => {
     const inputText = e.target.value;
@@ -84,16 +68,15 @@ function MainInput() {
       userTitle: currentState.inputTitle,
       userinput: currentState.inputValue,
       dateCreated: currentDate,
-      blogID: userDetails.firstName + newID,
-      firstName: userDetails.firstName,
-      lastName: userDetails.lastName,
+      blogID: currentUserFirstName + newID + currentDate,
       replies: [],
+      firstName: currentUserFirstName,
+      lastName: currentUserLastName,
     };
     const docRef = await addDoc(collection(db, "blogs"), newBlogDetails);
     const newBlog = { ...newBlogDetails, id: docRef.id };
+    await updateDoc(doc(db, "blogs", docRef.id), newBlog);
     addBlog(newBlog);
-    console.log(newBlog);
-
     currentState.inputTitle = "";
     currentState.inputValue = "";
     currentState.uniqueID = newID;
@@ -129,7 +112,15 @@ function MainInput() {
       showReplies: !prevState.showReplies,
     }));
   };
+  function handleShowRepliesLength(blogID) {
+    const findBlogForReplyLength = blogs.find((blog) => blog.blogID === blogID);
+    const lengthOfReplies = findBlogForReplyLength.replies.length;
+    return lengthOfReplies;
+  }
 
+  if (loading) {
+    return <Shimmer />;
+  }
   return (
     <>
       <div className="flex justify-center">
@@ -179,28 +170,25 @@ function MainInput() {
               Conversations
             </h1>
             {blogs &&
-              blogs?.map((blog) => {
+              blogs.map((blog) => {
                 return (
                   <div
                     className="w-full h-auto border  mb-2 mt-2 rounded-md  border-black  p-4"
-                    key={blog.blogID + blog.firstName + blog.dateCreated}
+                    key={blog?.blogID + blog?.firstName + blog?.dateCreated}
                   >
-                    <Link
-                      to={`:blogid=${blog.blogID}`}
-                      state={{ blogid: blog.blogID }}
-                    >
+                    <Link to={`/blogs/${blog.id}`} state={{ blogid: blog.id }}>
                       <h1 className="pl-4 font-serif text-3xl p-2 ">
-                        {blog.userTitle}
+                        {blog?.userTitle}
                       </h1>
                       <p className="pl-4 line-clamp-5 text-ellipsis ">
-                        {blog.userinput}
+                        {blog?.userinput}
                       </p>
                     </Link>
                     <div className="flex flex-col">
                       <p>
                         <button
                           className="font-sans text-lg  text-white bg-customcolorred p-2 rounded-md ml-4 mb-1 mt-4 font-semibold "
-                          onClick={() => handleShowInput(blog.blogID)}
+                          onClick={() => handleShowInput(blog?.blogID)}
                         >
                           {" "}
                           Reply
@@ -208,10 +196,10 @@ function MainInput() {
                       </p>
                       <p>
                         <button
-                          className="font-sans text-lg  text-black p-1 rounded-md ml-3 mb-2  mt-1 font-semibold "
-                          onClick={() => handleShowReplies(blog.blogID)}
+                          className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-1 font-semibold "
+                          onClick={() => handleShowReplies(blog?.blogID)}
                         >
-                          Replies {/* Replies ({handleReplyCount(blog.id)}) */}
+                          Replies({handleShowRepliesLength(blog.blogID)})
                         </button>
                       </p>
                     </div>
@@ -237,7 +225,7 @@ function MainInput() {
                       {blog?.firstName + " " + blog?.lastName}
                     </p>
                     <p className="flex justify-end p-2 text-base font-medium text-customColor">
-                      Created on: {blog.dateCreated}
+                      Created on: {blog?.dateCreated}
                     </p>
                   </div>
                 );

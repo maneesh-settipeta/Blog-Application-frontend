@@ -5,9 +5,9 @@ function DetailBlog() {
   const { blogs } = useContext(BlogContext);
 
   const { state } = useLocation();
-  const blogID = state.blogid;
+  const findBlogiD = state.blogid;
 
-  const findBlog = blogs.find((blog) => blog.blogID === blogID);
+  const findBlog = blogs.find((blog) => blog.id === findBlogiD);
 
   return (
     <>
@@ -26,7 +26,9 @@ function DetailBlog() {
           {findBlog.replies &&
             findBlog?.replies.map((reply, index) => (
               <div key={index}>
-                <p className="pl-4 text-sm border border-x-0 p-5">{reply}</p>
+                <p className="pl-4 text-sm border border-x-0 p-5">
+                  {reply.data}
+                </p>
               </div>
             ))}
         </div>

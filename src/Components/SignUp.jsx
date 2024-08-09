@@ -22,7 +22,6 @@ function SignUp() {
         password
       );
       const user = userCredential.user;
-      // console.log(user);
 
       await setDoc(doc(db, "users", user.uid), {
         firstName: firstname,
@@ -98,6 +97,11 @@ function SignUp() {
             <Link to="/Login">
               <button className=" p-2 text-customColor ed-md underline text-lg font-medium">
                 Sign-In
+              </button>
+            </Link>
+            <Link to="/Shimmer">
+              <button className=" p-2 text-customColor ed-md underline text-lg font-medium">
+                Shimmer
               </button>
             </Link>
           </div>

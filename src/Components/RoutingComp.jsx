@@ -8,6 +8,16 @@ import MainInput from "./MainInput";
 import DetailBlog from "./DetailBlog";
 import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
+import { useState, useEffect } from "react";
+import Shimmer from "./Shimmer";
+
+// function ProtectedRoute({ element, redirectPath }) {
+//   const [isAuthorized, setisAuthorized] = useState(() => {
+//     return localStorage.length > 0;
+//   });
+
+//   return isAuthorized ? element : <Navigate to={redirectPath} />;
+// }
 
 const routerComp = createBrowserRouter([
   {
@@ -16,12 +26,37 @@ const routerComp = createBrowserRouter([
   },
   { path: "/Login", element: <LoginPage /> },
   { path: "/SignUp", element: <SignUp /> },
+  { path: "/Shimmer", element: <Shimmer /> },
+  // {
+  //   path: "/blogs",
+  //   element: <ProtectedRoute element={<Home />} redirectPath="/Login" />,
+  //   children: [
+  //     {
+  //       path: "",
+  //       element: (
+  //         <ProtectedRoute element={<MainInput />} redirectPath="/Login" />
+  //       ),
+  //     },
+  //     {
+  //       path: ":blogId",
+  //       element: (
+  //         <ProtectedRoute element={<DetailBlog />} redirectPath="/Login" />
+  //       ),
+  //     },
+  //   ],
+  // },
   {
     path: "/blogs",
     element: <Home />,
     children: [
-      { path: "", element: <MainInput /> },
-      { path: ":blogid", element: <DetailBlog /> },
+      {
+        path: "",
+        element: <MainInput />,
+      },
+      {
+        path: ":blogId",
+        element: <DetailBlog />,
+      },
     ],
   },
 ]);

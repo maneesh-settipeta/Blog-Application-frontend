@@ -2,40 +2,63 @@ import { useState, useContext } from "react";
 import BlogContext from "../Store/StoreInput";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../firebase";
-function BlogReplyInput({ id, sendOnClick, replyOnClick, sendFirebaseId }) {
-  const [replyInputs, setReplyInputs] = useState([]);
-  const { addReplies } = useContext(BlogContext);
-  console.log(id);
-  const dateCreatedReplies = new Date().toLocaleString;
+
+function BlogReplyInput({ BlogId, sendOnClick, replyOnClick, sendFirebaseId }) {
+  const presentDataAndTime = new Date().toLocaleString();
+  const { addReplies, currentUserFirstName, currentUserLastName } =
+    useContext(BlogContext);
+
+  const [replyInputState, setReplyInputs] = useState({
+    data: null,
+    fullName: currentUserFirstName + " " + currentUserLastName,
+    createdDateAndTime: presentDataAndTime,
+    id: sendFirebaseId,
+  });
 
   function handleInputReply(e) {
-    setReplyInputs(e.target.value);
+    const inputValue = e.target.value;
+    setReplyInputs((prevstate) => ({
+      ...prevstate,
+      data: inputValue,
+    }));
   }
+
   const handleOnClickCancel = () => {
     sendOnClick(id);
   };
 
   const handleSendRepliesData = async () => {
-    console.log(id);
+    const fireBaseBlogRef = doc(db, "blogs", sendFirebaseId);
+    const newObjectReply = {
+      data: replyInputState.data || " ",
+      fullName: replyInputState.fullName || " ",
+      createdDateAndTime: replyInputState.createdDateAndTime,
+      id: replyInputState.id,
+    };
+    console.log(newObjectReply);
 
-    const blogDocRef = doc(db, "blogs", sendFirebaseId);
-
-    await updateDoc(blogDocRef, {
-      replies: arrayUnion(replyInputs),
+    await updateDoc(fireBaseBlogRef, {
+      replies: arrayUnion(newObjectReply),
     });
-    addReplies({ blogRepliess: replyInputs, id: id });
-    setReplyInputs("");
-    replyOnClick;
+    addReplies(newObjectReply);
+    console.log(newObjectReply);
+
+    console.log(newObjectReply);
+    setReplyInputs((prevState) => ({
+      ...prevState,
+      data: "",
+    }));
+    replyOnClick();
   };
 
   return (
     <>
-      <div className=" flex  md:flex-row mb-2  w-full  justify-between ">
+      <div className=" flex  md:flex-row mb-2  w-full  justify-between">
         <div className="ml-6 flex-grow ">
           <textarea
             type="text"
             onChange={handleInputReply}
-            value={replyInputs}
+            value={replyInputState.data}
             className="border border-black rounded-md  h-10 w-full  ml-4 "
             placeholder="Reply here"
           />
