@@ -38,7 +38,7 @@ function LoginPage() {
 
   return (
     <>
-      <div className="bg-customColor h-screen flex items-center justify-center">
+      <div className="bg-customColor h-screen flex items-center justify-center p-4">
         <div className="bg-[#f7f7f7] p-7 rounded-md border  w-1/4 h-1/2">
           <div>
             <p className="flex flex-col py-2">
