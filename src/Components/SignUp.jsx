@@ -46,7 +46,7 @@ function SignUp() {
               <input
                 className="w-full p-3 border  outline-none rounded-md"
                 ref={firstName}
-                placeholder="Please Enter your ID"
+                placeholder="Please Enter your firstName"
               ></input>
             </p>
           </div>
@@ -58,7 +58,7 @@ function SignUp() {
               <input
                 className="w-full p-3 border   outline-none rounded-md"
                 ref={secondName}
-                placeholder="Please Enter Password"
+                placeholder="Please Enter your LastName"
               ></input>
             </p>
           </div>
@@ -68,7 +68,7 @@ function SignUp() {
               <input
                 className="w-full p-3 border   outline-none rounded-md"
                 ref={userEmail}
-                placeholder="Please Enter Password"
+                placeholder="Please Enter your Email"
               ></input>
             </p>
           </div>
@@ -81,7 +81,7 @@ function SignUp() {
                 type="password"
                 className="w-full p-3 border   outline-none rounded-md"
                 ref={userPassword}
-                placeholder="Please Enter Password"
+                placeholder="Please Enter your Password"
               ></input>
             </p>
           </div>
@@ -97,11 +97,6 @@ function SignUp() {
             <Link to="/Login">
               <button className=" p-2 text-customColor ed-md underline text-lg font-medium">
                 Sign-In
-              </button>
-            </Link>
-            <Link to="/Shimmer">
-              <button className=" p-2 text-customColor ed-md underline text-lg font-medium">
-                Shimmer
               </button>
             </Link>
           </div>

@@ -26,7 +26,7 @@ const routerComp = createBrowserRouter([
   },
   { path: "/Login", element: <LoginPage /> },
   { path: "/SignUp", element: <SignUp /> },
-  { path: "/Shimmer", element: <Shimmer /> },
+
   // {
   //   path: "/blogs",
   //   element: <ProtectedRoute element={<Home />} redirectPath="/Login" />,

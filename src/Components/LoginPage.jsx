@@ -74,7 +74,7 @@ function LoginPage() {
               Sign-In
             </button>
           </div>
-          <div className="flex justify-center mt-8">
+          <div className="flex justify-center mt-5">
             <Link to="/SignUp">
               <button className="text-base mt-2 font-medium text-customColor  underline">
                 Dont have an Account Sign-Up!
