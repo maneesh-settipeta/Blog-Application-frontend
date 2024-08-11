@@ -1,7 +1,15 @@
 import BlogContext from "../Store/StoreInput";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 function UserInfo() {
   const { user } = useContext(BlogContext);
+  console.log(user);
+
+  useEffect(() => {}, [
+    user.firstName,
+    user.lastName,
+    user.email,
+    user.following,
+  ]);
 
   const firstNameFirstCharExtract = user.firstName[0];
   const firstNameLastCharExtract = user.lastName[0];
