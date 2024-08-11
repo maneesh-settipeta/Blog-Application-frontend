@@ -7,8 +7,13 @@ const BlogContext = createContext({
   replyClick: false,
   selectedBlog: undefined,
   replyCheckForTrue: false,
-  currentUserFirstName: localStorage.getItem("firstName"),
-  currentUserLastName: localStorage.getItem("lastName"),
+  user: {
+    firstName: localStorage.getItem("firstName"),
+    lastName: localStorage.getItem("lastName"),
+    id: null,
+    email: null,
+    following: [],
+  },
   addBlog: () => {},
   editReply: () => {},
   addReplies: () => {},
@@ -35,12 +40,14 @@ function projectBlogUseReducer(state, action) {
   }
 
   if (action.type === "SET-USER") {
-    localStorage.setItem("firstName", action.userDetails.firstName);
-    localStorage.setItem("lastName", action.userDetails.lastName);
+    localStorage.setItem("firstName", action.userData.firstName);
+    localStorage.setItem("lastName", action.userData.lastName);
+
     return {
       ...state,
-      currentUserFirstName: action.userDetails.firstName,
-      currentUserLastName: action.userDetails.lastName,
+      user: {
+        ...action.userData,
+      },
     };
   }
 
@@ -48,7 +55,6 @@ function projectBlogUseReducer(state, action) {
     const blogIndex = state.blogs.findIndex(
       (blog) => blog.id === action.repliesData.id
     );
-    console.log("Replies-Data", action.repliesData);
 
     const updatedBlog = {
       ...state.blogs[blogIndex],
@@ -56,8 +62,6 @@ function projectBlogUseReducer(state, action) {
     };
 
     const updatedBlogs = [...state.blogs];
-    console.log(updatedBlogs);
-
     updatedBlogs[blogIndex] = updatedBlog;
 
     return {
@@ -74,10 +78,16 @@ export function ProjectContext({ children }) {
     projectBlogUseReducer,
     {
       blogs: [],
-      currentUserFirstName: localStorage.getItem("firstName"),
-      currentUserLastName: localStorage.getItem("lastName"),
+      user: {
+        firstName: localStorage.getItem("firstName"),
+        lastName: localStorage.getItem("lastName"),
+        id: null,
+        email: null,
+        following: [],
+      },
     }
   );
+  projectStateReducer.user.email;
 
   function bulkBlog(blogData) {
     setProjectDispatch({
@@ -92,16 +102,16 @@ export function ProjectContext({ children }) {
     });
   }
 
-  const setUser = (userDetail) => {
+  const setUser = (userFromFirebase) => {
     setProjectDispatch({
       type: "SET-USER",
-      userDetails: userDetail,
+      userData: {
+        ...userFromFirebase,
+      },
     });
   };
 
   const addReplies = (repliesData) => {
-    console.log("Replies-Data", repliesData);
-
     setProjectDispatch({
       type: "ADD-REPLIES",
       repliesData: { ...repliesData },
@@ -115,11 +125,9 @@ export function ProjectContext({ children }) {
   const blogsData = {
     blogs: projectStateReducer.blogs,
     replyCheckForTrue: projectStateReducer.replyCheckForTrue,
-    currentUserFirstName: projectStateReducer.currentUserFirstName,
-    currentUserLastName: projectStateReducer.currentUserLastName,
+    user: projectStateReducer.user,
     addBlog,
     addReplies,
-    // blukBlogAdd,
     setUser,
     bulkBlog,
     clearLocalStorage,

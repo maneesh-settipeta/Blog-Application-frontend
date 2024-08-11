@@ -6,13 +6,12 @@ function ReplyDiscription({
   sendBlogRepliesButtonStatus,
   sendFirebaseId,
 }) {
-  const { blogs } = useContext(BlogContext);
+  const { blogs, user } = useContext(BlogContext);
 
-  const getBlogDescription = blogs.find((blog) => blog.blogID === sendId);
-  console.log(getBlogDescription.data);
+  const getBlogDescription = blogs.find((blog) => blog.id === sendId);
 
   useEffect(() => {}, [getBlogDescription]);
-  console.log(getBlogDescription.data);
+
   return (
     <>
       <div>
@@ -27,7 +26,7 @@ function ReplyDiscription({
               </p>
 
               <p className="flex justify-end text-customcolorred mr-2">
-                {eachReply?.fullName}
+                {user.userFirstName + " " + user.userLastName}
               </p>
               <p className="flex justify-end text-customColor mr-2">
                 {eachReply?.createdDateAndTime}

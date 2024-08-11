@@ -10,6 +10,7 @@ import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
 import { useState, useEffect } from "react";
 import Shimmer from "./Shimmer";
+import Profile from "./Profile";
 
 // function ProtectedRoute({ element, redirectPath }) {
 //   const [isAuthorized, setisAuthorized] = useState(() => {
@@ -27,32 +28,17 @@ const routerComp = createBrowserRouter([
   { path: "/Login", element: <LoginPage /> },
   { path: "/SignUp", element: <SignUp /> },
 
-  // {
-  //   path: "/blogs",
-  //   element: <ProtectedRoute element={<Home />} redirectPath="/Login" />,
-  //   children: [
-  //     {
-  //       path: "",
-  //       element: (
-  //         <ProtectedRoute element={<MainInput />} redirectPath="/Login" />
-  //       ),
-  //     },
-  //     {
-  //       path: ":blogId",
-  //       element: (
-  //         <ProtectedRoute element={<DetailBlog />} redirectPath="/Login" />
-  //       ),
-  //     },
-  //   ],
-  // },
   {
     path: "/blogs",
     element: <Home />,
     children: [
+      { path: "profile", element: <Profile /> },
+
       {
         path: "",
         element: <MainInput />,
       },
+
       {
         path: ":blogId",
         element: <DetailBlog />,

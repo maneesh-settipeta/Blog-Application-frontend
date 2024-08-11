@@ -9,9 +9,11 @@ function ProfileDropDown({ isOpen, clearLocalStorage }) {
             <p className="block px-4 py-2 text-lg w-40 text-customColor hover:bg-gray-100">
               Bookmarks
             </p>
-            <p className="block px-4 py-2 text-lg  w-40 text-customColor hover:bg-gray-100">
-              Followers
-            </p>
+            <Link to="profile">
+              <p className="block px-4 py-2 text-lg  w-40 text-customColor hover:bg-gray-100">
+                Profile
+              </p>
+            </Link>
             <p className="block px-4 py-2 text-lg  w-40 text-customColor hover:bg-gray-100">
               Settings
             </p>

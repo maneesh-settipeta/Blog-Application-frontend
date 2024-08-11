@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { auth, db } from "../firebase.js";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, updateDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 function SignUp() {
   const firstName = useRef(null);
@@ -22,13 +22,15 @@ function SignUp() {
         password
       );
       const user = userCredential.user;
-
-      await setDoc(doc(db, "users", user.uid), {
+      const userData = {
         firstName: firstname,
         lastName: lastname,
         email: email,
         password: password,
-      });
+        id: user.uid,
+        following: [],
+      };
+      const userDataWithId = await setDoc(doc(db, "users", user.uid), userData);
     } catch (error) {
       console.error("Error signing up: ", error);
     }

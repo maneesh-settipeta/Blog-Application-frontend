@@ -3,7 +3,7 @@ import BlogContext from "../Store/StoreInput";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../firebase";
 
-function BlogReplyInput({ BlogId, sendOnClick, replyOnClick, sendFirebaseId }) {
+function BlogReplyInput({ id, sendOnClick, replyOnClick, sendFirebaseId }) {
   const presentDataAndTime = new Date().toLocaleString();
   const { addReplies, currentUserFirstName, currentUserLastName } =
     useContext(BlogContext);
@@ -23,7 +23,7 @@ function BlogReplyInput({ BlogId, sendOnClick, replyOnClick, sendFirebaseId }) {
     }));
   }
 
-  const handleOnClickCancel = () => {
+  const handleOnClickCancel = (id) => {
     sendOnClick(id);
   };
 
@@ -35,15 +35,12 @@ function BlogReplyInput({ BlogId, sendOnClick, replyOnClick, sendFirebaseId }) {
       createdDateAndTime: replyInputState.createdDateAndTime,
       id: replyInputState.id,
     };
-    console.log(newObjectReply);
 
     await updateDoc(fireBaseBlogRef, {
       replies: arrayUnion(newObjectReply),
     });
     addReplies(newObjectReply);
-    console.log(newObjectReply);
 
-    console.log(newObjectReply);
     setReplyInputs((prevState) => ({
       ...prevState,
       data: "",
@@ -53,13 +50,13 @@ function BlogReplyInput({ BlogId, sendOnClick, replyOnClick, sendFirebaseId }) {
 
   return (
     <>
-      <div className=" flex  md:flex-row mb-2  w-full  justify-between">
+      <div className=" flex  md:flex-row mb-2 mt-2 w-full  justify-between">
         <div className="ml-6 flex-grow ">
           <textarea
             type="text"
             onChange={handleInputReply}
             value={replyInputState.data}
-            className="border border-black rounded-md  h-10 w-full  ml-4 "
+            className="border border-black rounded-md  h-10 w-full  ml-4 p-1 "
             placeholder="Reply here"
           />
         </div>

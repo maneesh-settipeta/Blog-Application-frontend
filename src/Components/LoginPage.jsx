@@ -29,7 +29,6 @@ function LoginPage() {
           }
         });
       }
-
       navigate("/blogs");
     } catch (error) {
       console.error("Invalid Credentials");

@@ -5,19 +5,14 @@ import ReplyDiscription from "./ReplyDiscription";
 import { Link } from "react-router-dom";
 import fetchBlogs from "../fetchBlogs";
 import { db } from "../firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, arrayUnion, collection } from "firebase/firestore";
 import { updateDoc, doc } from "firebase/firestore";
 import Shimmer from "./Shimmer";
 
 function MainInput() {
   const currentDate = new Date().toLocaleString();
-  const {
-    bulkBlog,
-    addBlog,
-    blogs,
-    currentUserFirstName,
-    currentUserLastName,
-  } = useContext(BlogContext);
+  const { bulkBlog, addBlog, blogs, user } = useContext(BlogContext);
+  useEffect(() => {}, [user.loggedInUserID]);
 
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +35,8 @@ function MainInput() {
     toggleInput: false,
     sendBlogRepliesButtonStatus: false,
   });
+
+  // const [isFollowing, setIsFollwing] = useState({});
 
   const handleInput = (e) => {
     const inputText = e.target.value;
@@ -68,15 +65,18 @@ function MainInput() {
       userTitle: currentState.inputTitle,
       userinput: currentState.inputValue,
       dateCreated: currentDate,
-      blogID: currentUserFirstName + newID + currentDate,
       replies: [],
-      firstName: currentUserFirstName,
-      lastName: currentUserLastName,
+      userID: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      emial: user.email,
     };
+
     const docRef = await addDoc(collection(db, "blogs"), newBlogDetails);
     const newBlog = { ...newBlogDetails, id: docRef.id };
     await updateDoc(doc(db, "blogs", docRef.id), newBlog);
     addBlog(newBlog);
+
     currentState.inputTitle = "";
     currentState.inputValue = "";
     currentState.uniqueID = newID;
@@ -112,10 +112,32 @@ function MainInput() {
       showReplies: !prevState.showReplies,
     }));
   };
+  const handleSendFollow = async (firstName, lastName, id) => {
+    const userFollowing = {
+      firstName,
+      lastName,
+      id,
+    };
+    try {
+      const userDocRef = doc(db, "users", user.id);
+      const updateFollowing = await updateDoc(userDocRef, {
+        following: arrayUnion(userFollowing),
+      });
+    } catch (error) {
+      console.error("Error Uploading");
+    }
+  };
   function handleShowRepliesLength(blogID) {
-    const findBlogForReplyLength = blogs.find((blog) => blog.blogID === blogID);
+    const findBlogForReplyLength = blogs.find((blog) => blog.id === blogID);
     const lengthOfReplies = findBlogForReplyLength.replies.length;
     return lengthOfReplies;
+  }
+  function isFollowing(blog) {
+    return user.following?.some(
+      (followedUser) =>
+        followedUser.firstName.toLowerCase() === blog.firstName.toLowerCase() &&
+        followedUser.lastName.toLowerCase() === blog.lastName.toLowerCase()
+    );
   }
 
   if (loading) {
@@ -184,49 +206,67 @@ function MainInput() {
                         {blog?.userinput}
                       </p>
                     </Link>
-                    <div className="flex flex-col">
-                      <p>
-                        <button
-                          className="font-sans text-lg  text-white bg-customcolorred p-2 rounded-md ml-4 mb-1 mt-4 font-semibold "
-                          onClick={() => handleShowInput(blog?.blogID)}
-                        >
-                          {" "}
-                          Reply
-                        </button>
-                      </p>
-                      <p>
-                        <button
-                          className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-1 font-semibold "
-                          onClick={() => handleShowReplies(blog?.blogID)}
-                        >
-                          Replies({handleShowRepliesLength(blog.blogID)})
-                        </button>
-                      </p>
+                    <div className="flex justify-between">
+                      <div>
+                        <p>
+                          <button
+                            className="font-sans text-lg mb-3 text-white bg-customcolorred p-2 rounded-md ml-4  mt-4 font-semibold "
+                            onClick={() => handleShowInput(blog?.id)}
+                          >
+                            {" "}
+                            Reply
+                          </button>
+                        </p>
+                      </div>
+                      <div>
+                        <div className="flex justify-end">
+                          <p className=" p-1 text-lg mt-2  font-medium text-customcolorred">
+                            {blog.firstName + " " + blog.lastName}
+                          </p>
+                          <button
+                            onClick={() =>
+                              handleSendFollow(
+                                blog.firstName,
+                                blog.lastName,
+                                blog.id
+                              )
+                            }
+                            className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
+                          >
+                            {" "}
+                            {isFollowing(blog) ? "Following" : "Follow"}
+                          </button>
+                        </div>
+                        <p className="flex justify-end p-1 text-base font-medium text-customColor">
+                          Created on: {blog?.dateCreated}
+                        </p>
+                      </div>
                     </div>
-                    {currentState.sendBlogRepliesButtonStatus &&
-                      currentState.blogReplies === blog.blogID && (
-                        <ReplyDiscription
-                          sendId={blog.blogID}
-                          sendBlogRepliesButtonStatus={
-                            currentState.sendBlogRepliesButtonStatus
-                          }
-                        />
-                      )}
-
-                    {currentState.showInputField === blog.blogID && (
+                    {currentState.showInputField === blog.id && (
                       <BlogReplyInput
-                        id={blog.blogID}
+                        id={blog.id}
                         sendFirebaseId={blog.id}
                         sendOnClick={handleCancelButton}
                         replyOnClick={handleReplyClick}
                       />
                     )}
-                    <p className="flex justify-end p-2 text-lg  font-medium text-customcolorred">
-                      {blog?.firstName + " " + blog?.lastName}
+                    <p>
+                      <button
+                        className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-1 font-semibold "
+                        onClick={() => handleShowReplies(blog.id)}
+                      >
+                        Replies({handleShowRepliesLength(blog.id)})
+                      </button>
                     </p>
-                    <p className="flex justify-end p-2 text-base font-medium text-customColor">
-                      Created on: {blog?.dateCreated}
-                    </p>
+                    {currentState.sendBlogRepliesButtonStatus &&
+                      currentState.blogReplies === blog.id && (
+                        <ReplyDiscription
+                          sendId={blog.id}
+                          sendBlogRepliesButtonStatus={
+                            currentState.sendBlogRepliesButtonStatus
+                          }
+                        />
+                      )}
                   </div>
                 );
               })}
