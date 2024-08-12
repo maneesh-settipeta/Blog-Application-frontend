@@ -2,7 +2,6 @@ import BlogContext from "../Store/StoreInput";
 import { useContext, useEffect } from "react";
 function UserInfo() {
   const { user } = useContext(BlogContext);
-  console.log(user);
 
   useEffect(() => {}, [
     user.firstName,

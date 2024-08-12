@@ -42,6 +42,7 @@ function projectBlogUseReducer(state, action) {
   if (action.type === "SET-USER") {
     localStorage.setItem("firstName", action.userData.firstName);
     localStorage.setItem("lastName", action.userData.lastName);
+    console.log(action.userData);
 
     return {
       ...state,

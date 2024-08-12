@@ -8,6 +8,8 @@ import { db } from "../firebase";
 import { addDoc, arrayUnion, collection } from "firebase/firestore";
 import { updateDoc, doc } from "firebase/firestore";
 import Shimmer from "./Shimmer";
+import { FaRegBookmark } from "react-icons/fa";
+import { IoBookmark } from "react-icons/io5";
 
 function MainInput() {
   const currentDate = new Date().toLocaleString();
@@ -36,7 +38,7 @@ function MainInput() {
     sendBlogRepliesButtonStatus: false,
   });
 
-  // const [isFollowing, setIsFollwing] = useState({});
+  const [isBookMarkSaved, setBookMark] = useState({});
 
   const handleInput = (e) => {
     const inputText = e.target.value;
@@ -87,6 +89,7 @@ function MainInput() {
       showInputField: id,
     }));
   };
+
   const handleCancelButton = (blogID) => {
     setCurrentState((prevState) => {
       if (prevState.showInputField === blogID) {
@@ -139,6 +142,20 @@ function MainInput() {
         followedUser.lastName.toLowerCase() === blog.lastName.toLowerCase()
     );
   }
+  const handleSaveBookmarkBlog = async (blog) => {
+    try {
+      const userDocRef = doc(db, "users", user.id);
+      await updateDoc(userDocRef, {
+        savedBlogs: arrayUnion(blog),
+      });
+      setBookMark((prevState) => ({
+        ...prevState,
+        [blog.id]: true,
+      }));
+    } catch (error) {
+      console.error("Error Uploading");
+    }
+  };
 
   if (loading) {
     return <Shimmer />;
@@ -250,14 +267,26 @@ function MainInput() {
                         replyOnClick={handleReplyClick}
                       />
                     )}
-                    <p>
+                    <div className="flex justify-between">
+                      <p>
+                        <button
+                          className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-1 font-semibold "
+                          onClick={() => handleShowReplies(blog.id)}
+                        >
+                          Replies({handleShowRepliesLength(blog.id)})
+                        </button>
+                      </p>
                       <button
-                        className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-1 font-semibold "
-                        onClick={() => handleShowReplies(blog.id)}
+                        className="mt-5 size-5"
+                        onClick={() => handleSaveBookmarkBlog(blog)}
                       >
-                        Replies({handleShowRepliesLength(blog.id)})
+                        {isBookMarkSaved[blog.id] === true ? (
+                          <IoBookmark />
+                        ) : (
+                          <FaRegBookmark />
+                        )}
                       </button>
-                    </p>
+                    </div>
                     {currentState.sendBlogRepliesButtonStatus &&
                       currentState.blogReplies === blog.id && (
                         <ReplyDiscription
