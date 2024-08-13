@@ -1,9 +1,20 @@
 import BlogContext from "../Store/StoreInput";
-import { useContext } from "react";
-function MyBlogs() {
-  const { blogs, user } = useContext(BlogContext);
+import { useContext, useEffect, useState } from "react";
+import fetchBlogs from "../fetchBlogs";
 
-  const findMyBlogs = blogs.filter((blog) => blog.userID === user.id);
+function MyBlogs() {
+  const { user } = useContext(BlogContext);
+  const [blogsData, setBlogsData] = useState([]);
+
+  async function fetchBlogsData() {
+    const blogsData = await fetchBlogs();
+    setBlogsData(blogsData);
+  }
+  useEffect(() => {
+    fetchBlogsData();
+  }, []);
+
+  const findMyBlogs = blogsData.filter((blog) => blog.userID === user.id);
   return (
     <>
       <div>

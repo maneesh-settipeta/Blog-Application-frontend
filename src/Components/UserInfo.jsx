@@ -10,6 +10,8 @@ function UserInfo() {
     user.following,
   ]);
 
+  console.log(user, "UserInfo");
+
   const firstNameFirstCharExtract = user.firstName[0];
   const firstNameLastCharExtract = user.lastName[0];
   return (

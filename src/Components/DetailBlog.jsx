@@ -16,6 +16,12 @@ function DetailBlog() {
           <h1 className="p-4 font-medium text-4xl text-left text-customColors underline">
             {findBlog?.userTitle}
           </h1>
+          <p className="flex   justify-end  text-customcolorred">
+            {findBlog.firstName + " " + findBlog.lastName}
+          </p>
+          <p className="flex pt-1  justify-end  text-customColor">
+            {findBlog.dateCreated}
+          </p>
           <p className="p-4 font-medium text-2xl text-left ">
             <span className=" underline">Description:</span>{" "}
             {findBlog?.userinput}

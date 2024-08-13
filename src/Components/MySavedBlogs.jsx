@@ -3,12 +3,11 @@ import BlogContext from "../Store/StoreInput";
 
 function MySavedBlogs() {
   const { user } = useContext(BlogContext);
-  console.log(user.savedBlogs);
+  console.log(user, "savedBlogs");
 
   return (
     <>
       {user?.savedBlogs?.map((eachMySavedBlog, index) => {
-        console.log(eachMySavedBlog);
         return (
           <div
             key={index}

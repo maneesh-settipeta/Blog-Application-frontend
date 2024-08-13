@@ -14,6 +14,7 @@ const BlogContext = createContext({
     email: null,
     following: [],
   },
+  searchQuery: null,
   addBlog: () => {},
   editReply: () => {},
   addReplies: () => {},
@@ -21,7 +22,7 @@ const BlogContext = createContext({
   setUser: () => {},
   bulkBlog: () => {},
   clearLocalStorage: () => {},
-  // blukBlogAdd: () => {},
+  handleSearchQuery: () => {},
 });
 
 function projectBlogUseReducer(state, action) {
@@ -70,6 +71,12 @@ function projectBlogUseReducer(state, action) {
       blogs: updatedBlogs,
     };
   }
+  if (action.type === "SEARCH-QUERY") {
+    return {
+      ...state,
+      searchQuery: action.searchQueryValue,
+    };
+  }
 
   return state;
 }
@@ -86,6 +93,7 @@ export function ProjectContext({ children }) {
         email: null,
         following: [],
       },
+      searchQuery: null,
     }
   );
   projectStateReducer.user.email;
@@ -122,16 +130,24 @@ export function ProjectContext({ children }) {
   function clearLocalStorage() {
     localStorage.clear();
   }
+  const handleSearchQuery = (searchQuery) => {
+    setProjectDispatch({
+      type: "SEARCH-QUERY",
+      searchQueryValue: searchQuery,
+    });
+  };
 
   const blogsData = {
     blogs: projectStateReducer.blogs,
     replyCheckForTrue: projectStateReducer.replyCheckForTrue,
     user: projectStateReducer.user,
+    searchQuery: projectStateReducer.searchQuery,
     addBlog,
     addReplies,
     setUser,
     bulkBlog,
     clearLocalStorage,
+    handleSearchQuery,
   };
 
   return (

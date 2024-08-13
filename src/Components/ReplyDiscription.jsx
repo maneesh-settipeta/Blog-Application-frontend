@@ -19,17 +19,17 @@ function ReplyDiscription({
           getBlogDescription?.replies.map((eachReply, index) => (
             <div
               key={index}
-              className="border ml-10 mr-4 bg-slate-200 rounded-md mb-2 p-2"
+              className="border ml-10 mr-4 bg-customcolorwarmgray rounded-md mb-2 p-2"
             >
               <p className="p-1 font-medium line-clamp-5 text-ellipsis">
                 {eachReply.data}
               </p>
 
               <p className="flex justify-end text-customcolorred mr-2">
-                {user.userFirstName + " " + user.userLastName}
+                {user.firstName + " " + user.lastName}
               </p>
               <p className="flex justify-end text-customColor mr-2">
-                {eachReply?.createdDateAndTime}
+                {eachReply?.dateCreated}
               </p>
             </div>
           ))}

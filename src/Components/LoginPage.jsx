@@ -6,11 +6,12 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 // import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import BlogContext from "../Store/StoreInput";
-import { useContext } from "react";
+// import BlogContext from "../Store/StoreInput";
+// import { useContext } from "react";
+// import fetchUserDetails from "../fetchUserDetails";
 
 function LoginPage() {
-  const { setUser } = useContext(BlogContext);
+  // const { setUser } = useContext(BlogContext);
   const userId = useRef(null);
   const userPassword = useRef(null);
   const navigate = useNavigate();
@@ -20,15 +21,7 @@ function LoginPage() {
     const password = userPassword.current.value;
 
     try {
-      if (await signInWithEmailAndPassword(auth, email, password)) {
-        auth.onAuthStateChanged(async (user) => {
-          const docref = doc(db, "users", user.uid);
-          const docData = await getDoc(docref);
-          if (docData.exists()) {
-            setUser(docData.data());
-          }
-        });
-      }
+      await signInWithEmailAndPassword(auth, email, password);
       navigate("/blogs");
     } catch (error) {
       console.error("Invalid Credentials");
