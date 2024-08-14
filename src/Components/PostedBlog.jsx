@@ -30,7 +30,7 @@ const PostedBlog = ({ sendBlogsData }) => {
       console.log(userSavedBookMarks, "THIS");
 
       const arr = userSavedBookMarks
-      .filter(obj => Object.values(obj)[0] === true)
+      .filter(obj => Object.values(obj)[0] === true) 
       .map((obj) => Object.keys(obj)[0]);
 
       console.log(arr);
