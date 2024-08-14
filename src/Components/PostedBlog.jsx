@@ -21,13 +21,19 @@ const PostedBlog = ({ sendBlogsData }) => {
     toggleInput: false,
     sendBlogRepliesButtonStatus: false,
   });
-  const [isBookMarkSaved, setBookMark] = useState({});
+  const [isBookMarkSaved, setBookMark] = useState([]);
+  console.log(isBookMarkSaved);
 
   const fetchUserSavedBlogs = async () => {
     try {
       const response = await fetchUserDetails();
-      const userSavedBookMarks = response.savedBlogs;
-      setBookMark(userSavedBookMarks);
+      const userSavedBookMarks = response.blogSaved;
+      console.log(userSavedBookMarks, "THIS");
+      userSavedBookMarks.forEach((eachBlog) => {
+        setBookMark((prevState) => ({
+          ...prevState,
+        }));
+      });
     } catch (error) {
       console.error("Error fetching user saved blogs", error);
     }
@@ -104,12 +110,13 @@ const PostedBlog = ({ sendBlogsData }) => {
         [blog.id]: true,
       }));
       const userDocRef = doc(db, "users", user.id);
-      const updateObject = {
+      const loadBookMarksData = {
         [blog.id]: true,
       };
 
       await updateDoc(userDocRef, {
-        savedBlogs: arrayUnion(updateObject),
+        savedBlogs: arrayUnion(blog),
+        blogSaved: arrayUnion(loadBookMarksData),
       });
     } catch (error) {
       console.error("Error Uploading");
@@ -187,7 +194,7 @@ const PostedBlog = ({ sendBlogsData }) => {
                   className="mt-5 size-5"
                   onClick={() => handleSaveBookmarkBlog(blog)}
                 >
-                  {isBookMarkSaved[blog.id] ? (
+                  {isBookMarkSaved.blog?.id === true ? (
                     <IoBookmark />
                   ) : (
                     <FaRegBookmark />

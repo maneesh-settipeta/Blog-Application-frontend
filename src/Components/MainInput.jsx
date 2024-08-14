@@ -109,7 +109,7 @@ function MainInput() {
             className="flex underline mb-2 text-customColor font-serif text-3xl  text-start "
             onClick={handleToggleInputs}
           >
-            {currentState.toggleInput ? "Write a post" : "Post Blog+"}
+            {currentState.toggleInput ? "Write a post" : "Post Blog"}
           </button>
           {currentState.toggleInput ? (
             <div>
