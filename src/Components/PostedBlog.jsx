@@ -27,7 +27,7 @@ const PostedBlog = ({ sendBlogsData }) => {
     try {
       const response = await fetchUserDetails();
       const userSavedBookMarks = response.blogSaved;
-      console.log(userSavedBookMarks, "THIS");
+      console.log(userSavedBookMarks, "THIS"); 
 
       const arr = userSavedBookMarks
       .filter(obj => Object.values(obj)[0] === true) 
