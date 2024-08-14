@@ -22,18 +22,19 @@ const PostedBlog = ({ sendBlogsData }) => {
     sendBlogRepliesButtonStatus: false,
   });
   const [isBookMarkSaved, setBookMark] = useState([]);
-  console.log(isBookMarkSaved);
-
+  const [listOfBookmarks, setListOfBookMark] = useState([]);
   const fetchUserSavedBlogs = async () => {
     try {
       const response = await fetchUserDetails();
       const userSavedBookMarks = response.blogSaved;
       console.log(userSavedBookMarks, "THIS");
-      userSavedBookMarks.forEach((eachBlog) => {
-        setBookMark((prevState) => ({
-          ...prevState,
-        }));
-      });
+
+      const arr = userSavedBookMarks
+      .filter(obj => Object.values(obj)[0] === true)
+      .map((obj) => Object.keys(obj)[0]);
+
+      console.log(arr);
+      setListOfBookMark(arr);
     } catch (error) {
       console.error("Error fetching user saved blogs", error);
     }
@@ -103,15 +104,16 @@ const PostedBlog = ({ sendBlogsData }) => {
         followedUser.lastName.toLowerCase() === blog.lastName.toLowerCase()
     );
   }
-  const handleSaveBookmarkBlog = async (blog) => {
+  const handleSaveBookmarkBlog = async (blog, flag) => {
+    console.log(flag);
     try {
       setBookMark((prevState) => ({
         ...prevState,
-        [blog.id]: true,
+        [blog.id]: flag,
       }));
       const userDocRef = doc(db, "users", user.id);
       const loadBookMarksData = {
-        [blog.id]: true,
+        [blog.id]: flag,
       };
 
       await updateDoc(userDocRef, {
@@ -190,14 +192,16 @@ const PostedBlog = ({ sendBlogsData }) => {
                     Replies({handleShowRepliesLength(blog.id)})
                   </button>
                 </p>
-                <button
-                  className="mt-5 size-5"
-                  onClick={() => handleSaveBookmarkBlog(blog)}
-                >
-                  {isBookMarkSaved.blog?.id === true ? (
-                    <IoBookmark />
+
+                <button className="mt-5 size-5">
+                  {listOfBookmarks?.includes(blog?.id) ? (
+                    <span onClick={() => handleSaveBookmarkBlog(blog, false)}>
+                      <IoBookmark />
+                    </span>
                   ) : (
-                    <FaRegBookmark />
+                    <span onClick={() => handleSaveBookmarkBlog(blog, true)}>
+                      <FaRegBookmark />
+                    </span>
                   )}
                 </button>
               </div>
