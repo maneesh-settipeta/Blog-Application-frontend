@@ -9,7 +9,6 @@ async function fetchUserDetails() {
         try {
           const userData = await getDoc(docRef);
           if (userData.exists()) {
-            console.log(userData.data());
             resolve(userData.data());
           } else {
             console.error("No user Details found");

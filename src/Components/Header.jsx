@@ -12,8 +12,10 @@ function Header() {
   const handleOpenProfileMenu = () => {
     setOpenMenu(!isOpenMenu);
   };
+
   const handleSendSearchQuery = (searchQuery) => {
     setSearchingQuery(searchQuery);
+
     handleSearchQuery(searchQuery);
   };
 
@@ -52,6 +54,7 @@ function Header() {
           <ProfileDropDown
             clearLocalStorage={clearLocalStorage}
             isOpen={isOpenMenu}
+            isClosedDropDown={() => handleOpenProfileMenu()}
           />
         </div>
       </div>

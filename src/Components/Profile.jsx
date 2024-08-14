@@ -13,7 +13,7 @@ function Profile() {
   const fetchUserAndBlogsData = async () => {
     const userData = await fetchUserDetails();
     const blogsData = await fetchBlogs();
-    console.log(userData, "Fetching Data");
+
     setUser(userData);
     addBlog(blogsData);
   };

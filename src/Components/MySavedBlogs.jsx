@@ -3,7 +3,6 @@ import BlogContext from "../Store/StoreInput";
 
 function MySavedBlogs() {
   const { user } = useContext(BlogContext);
-  console.log(user, "savedBlogs");
 
   return (
     <>

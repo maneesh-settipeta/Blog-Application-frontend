@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 
-function ProfileDropDown({ isOpen, clearLocalStorage }) {
+function ProfileDropDown({ isOpen, clearLocalStorage, isClosedDropDown }) {
+  function handleHideDropDown() {
+    isClosedDropDown();
+  }
   return (
     <>
       {isOpen && (
@@ -10,7 +13,10 @@ function ProfileDropDown({ isOpen, clearLocalStorage }) {
               Bookmarks
             </p>
             <Link to="profile">
-              <p className="block px-4 py-2 text-lg  w-40 text-customColor hover:bg-gray-100">
+              <p
+                onClick={handleHideDropDown}
+                className="block px-4 py-2 text-lg  w-40 text-customColor hover:bg-gray-100"
+              >
                 Profile
               </p>
             </Link>

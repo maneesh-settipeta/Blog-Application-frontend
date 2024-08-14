@@ -1,11 +1,7 @@
 import { useContext, useEffect } from "react";
 import BlogContext from "../Store/StoreInput";
 
-function ReplyDiscription({
-  sendId,
-  sendBlogRepliesButtonStatus,
-  sendFirebaseId,
-}) {
+function ReplyDiscription({ sendId, sendBlogRepliesButtonStatus }) {
   const { blogs, user } = useContext(BlogContext);
 
   const getBlogDescription = blogs.find((blog) => blog.id === sendId);
@@ -29,7 +25,7 @@ function ReplyDiscription({
                 {user.firstName + " " + user.lastName}
               </p>
               <p className="flex justify-end text-customColor mr-2">
-                {eachReply?.dateCreated}
+                {eachReply?.createdDateAndTime}
               </p>
             </div>
           ))}

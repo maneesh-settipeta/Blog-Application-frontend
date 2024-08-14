@@ -10,11 +10,13 @@ function MyBlogs() {
     const blogsData = await fetchBlogs();
     setBlogsData(blogsData);
   }
+
   useEffect(() => {
     fetchBlogsData();
   }, []);
 
   const findMyBlogs = blogsData.filter((blog) => blog.userID === user.id);
+
   return (
     <>
       <div>
