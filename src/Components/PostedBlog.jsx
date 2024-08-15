@@ -100,7 +100,8 @@ const PostedBlog = ({ sendBlogsData }) => {
         followedUser.lastName.toLowerCase() === blog.lastName.toLowerCase()
     );
   }
-  const handleSaveBookmarkBlog = async (blog) => {
+  const handleSaveBookmarkBlog = async (blog, flag) => {
+    console.log(flag);
     try {
       const isAlreadySaved = isBookMarkSaved.includes(blog.id);
       const userDocRef = doc(db, "users", user.id);
