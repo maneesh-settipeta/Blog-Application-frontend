@@ -35,7 +35,7 @@ const routerComp = createBrowserRouter([
     children: [
       { path: "profile", element: <Profile /> },
 
-      { path: "bookMarks", element: <BookMarks /> },
+      { path: "bookMarks", element: <MainInput /> },
       {
         path: "",
         element: <MainInput />,

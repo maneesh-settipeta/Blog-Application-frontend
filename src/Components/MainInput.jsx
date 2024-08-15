@@ -7,10 +7,27 @@ import { updateDoc, doc } from "firebase/firestore";
 import Shimmer from "./Shimmer";
 import fetchUserDetails from "../fetchUserDetails";
 import PostedBlog from "./PostedBlog";
+import { useLocation } from "react-router-dom";
 
 function MainInput() {
   const { bulkBlog, addBlog, blogs, user, setUser, searchQuery } =
     useContext(BlogContext);
+
+  const [displayBlogs, setDisplayBlogs] = useState(blogs);
+
+  const fetchUserSavedBlogs = async () => {
+    try {
+      const response = await fetchUserDetails();
+      const userSavedBookMarks = response.savedBlogs;
+      console.log(userSavedBookMarks);
+      setDisplayBlogs(userSavedBookMarks);
+      setUser(response);
+    } catch (error) {
+      console.error("Error fetching user saved blogs", error);
+    }
+  };
+
+  const location = useLocation();
 
   async function fetchingUserDetails() {
     const userData = await fetchUserDetails();
@@ -18,7 +35,13 @@ function MainInput() {
   }
   useEffect(() => {
     fetchingUserDetails();
-  }, []);
+    console.log(location.pathname);
+    if (location.pathname === "/blogs/bookMarks") {
+      fetchUserSavedBlogs();
+    } else {
+      setDisplayBlogs(blogs);
+    }
+  }, [location.pathname]);
 
   const currentDate = new Date().toLocaleString();
 
@@ -39,12 +62,6 @@ function MainInput() {
     inputTitle: "",
     inputValue: "",
   });
-
-  const filteredBlogs = blogs.filter(
-    (blog) =>
-      blog.userTitle?.toLowerCase().includes(searchQuery) ||
-      `${blog?.firstName} ${blog?.lastName}`.toLowerCase().includes(searchQuery)
-  );
 
   const handleInput = (e) => {
     const inputText = e.target.value;
@@ -89,16 +106,25 @@ function MainInput() {
     currentState.inputValue = "";
     currentState.uniqueID = newID;
   };
+
+  let filteredBlogs;
+  useEffect(() => {
+    filteredBlogs = blogs.filter(
+      (blog) =>
+        blog.userTitle?.toLowerCase().includes(searchQuery) ||
+        `${blog?.firstName} ${blog?.lastName}`
+          .toLowerCase()
+          .includes(searchQuery)
+    );
+    if (filteredBlogs?.length > 0) {
+      setDisplayBlogs(filteredBlogs);
+    }
+
+    console.log(filteredBlogs);
+  }, [searchQuery]);
+
   if (loading) {
     return <Shimmer />;
-  }
-
-  let displayBlogs;
-
-  if (filteredBlogs.length > 0) {
-    displayBlogs = filteredBlogs;
-  } else {
-    displayBlogs = blogs;
   }
 
   return (
@@ -149,6 +175,7 @@ function MainInput() {
               Conversations
             </h1>
             <PostedBlog sendBlogsData={displayBlogs} />
+            {/* <PostedBlog sendBlogsData={bookMarksBlogs} /> */}
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ function ProfileDropDown({ isOpen, clearLocalStorage, isClosedDropDown }) {
   function handleHideDropDown() {
     isClosedDropDown();
   }
+
   return (
     <>
       {isOpen && (

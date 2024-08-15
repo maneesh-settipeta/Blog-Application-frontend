@@ -15,7 +15,6 @@ function Header() {
 
   const handleSendSearchQuery = (searchQuery) => {
     setSearchingQuery(searchQuery);
-
     handleSearchQuery(searchQuery);
   };
 
