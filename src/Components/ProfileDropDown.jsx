@@ -9,9 +9,11 @@ function ProfileDropDown({ isOpen, clearLocalStorage, isClosedDropDown }) {
       {isOpen && (
         <div className="origin-top-right absolute right-0 mt-16 w-40 flex  rounded-md shadow-lg bg-white  focus:outline-none">
           <div>
-            <p className="block px-4 py-2 text-lg w-40 text-customColor hover:bg-gray-100">
-              Bookmarks
-            </p>
+            <Link to="bookMarks">
+              <p className="block px-4 py-2 text-lg w-40 text-customColor hover:bg-gray-100">
+                Bookmarks
+              </p>
+            </Link>
             <Link to="profile">
               <p
                 onClick={handleHideDropDown}

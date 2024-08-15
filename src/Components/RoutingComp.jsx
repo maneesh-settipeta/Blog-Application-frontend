@@ -11,6 +11,7 @@ import SignUp from "./SignUp";
 import { useState, useEffect } from "react";
 import Shimmer from "./Shimmer";
 import Profile from "./Profile";
+import BookMarks from "./BookMarks";
 
 // function ProtectedRoute({ element, redirectPath }) {
 //   const [isAuthorized, setisAuthorized] = useState(() => {
@@ -34,6 +35,7 @@ const routerComp = createBrowserRouter([
     children: [
       { path: "profile", element: <Profile /> },
 
+      { path: "bookMarks", element: <BookMarks /> },
       {
         path: "",
         element: <MainInput />,

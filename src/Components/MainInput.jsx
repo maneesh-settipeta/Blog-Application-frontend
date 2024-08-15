@@ -114,7 +114,6 @@ function MainInput() {
           {currentState.toggleInput ? (
             <div>
               <p className="font-serif text-2xl text-gray-950 mt-5   ">Title</p>
-
               <input
                 type="text"
                 onChange={handleTitleInput}

@@ -10,6 +10,8 @@ import { updateDoc } from "firebase/firestore";
 import BlogContext from "../Store/StoreInput";
 import { arrayUnion } from "firebase/firestore";
 import fetchUserDetails from "../fetchUserDetails";
+import { arrayRemove } from "firebase/firestore";
+
 const PostedBlog = ({ sendBlogsData }) => {
   const { blogs, user } = useContext(BlogContext);
 
@@ -22,18 +24,13 @@ const PostedBlog = ({ sendBlogsData }) => {
     sendBlogRepliesButtonStatus: false,
   });
   const [isBookMarkSaved, setBookMark] = useState([]);
-  console.log(isBookMarkSaved);
 
   const fetchUserSavedBlogs = async () => {
     try {
       const response = await fetchUserDetails();
       const userSavedBookMarks = response.blogSaved;
-      console.log(userSavedBookMarks, "THIS");
-      userSavedBookMarks.forEach((eachBlog) => {
-        setBookMark((prevState) => ({
-          ...prevState,
-        }));
-      });
+
+      setBookMark(userSavedBookMarks);
     } catch (error) {
       console.error("Error fetching user saved blogs", error);
     }
@@ -105,19 +102,22 @@ const PostedBlog = ({ sendBlogsData }) => {
   }
   const handleSaveBookmarkBlog = async (blog) => {
     try {
-      setBookMark((prevState) => ({
-        ...prevState,
-        [blog.id]: true,
-      }));
+      const isAlreadySaved = isBookMarkSaved.includes(blog.id);
       const userDocRef = doc(db, "users", user.id);
-      const loadBookMarksData = {
-        [blog.id]: true,
-      };
+      if (isAlreadySaved) {
+        setBookMark((prevState) => prevState.filter((id) => id !== blog.id));
 
-      await updateDoc(userDocRef, {
-        savedBlogs: arrayUnion(blog),
-        blogSaved: arrayUnion(loadBookMarksData),
-      });
+        await updateDoc(userDocRef, {
+          savedBlogs: arrayRemove(blog),
+          blogSaved: arrayRemove(blog.id),
+        });
+      } else {
+        setBookMark((prevState) => [...prevState, blog.id]);
+        await updateDoc(userDocRef, {
+          savedBlogs: arrayUnion(blog),
+          blogSaved: arrayUnion(blog.id),
+        });
+      }
     } catch (error) {
       console.error("Error Uploading");
     }
@@ -190,16 +190,22 @@ const PostedBlog = ({ sendBlogsData }) => {
                     Replies({handleShowRepliesLength(blog.id)})
                   </button>
                 </p>
-                <button
-                  className="mt-5 size-5"
-                  onClick={() => handleSaveBookmarkBlog(blog)}
-                >
-                  {isBookMarkSaved.blog?.id === true ? (
+                {isBookMarkSaved.includes(blog.id) ? (
+                  <button
+                    className="mt-5 size-5"
+                    onClick={() => handleSaveBookmarkBlog(blog)}
+                  >
                     <IoBookmark />
-                  ) : (
+                  </button>
+                ) : (
+                  <button
+                    className="mt-5 size-5"
+                    onClick={() => handleSaveBookmarkBlog(blog)}
+                  >
+                    {" "}
                     <FaRegBookmark />
-                  )}
-                </button>
+                  </button>
+                )}
               </div>
               {currentState.sendBlogRepliesButtonStatus &&
                 currentState.blogReplies === blog.id && (
