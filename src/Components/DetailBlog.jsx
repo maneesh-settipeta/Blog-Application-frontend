@@ -11,7 +11,6 @@ function DetailBlog() {
   const findBlogiD = state.blogid;
 
   const findBlog = blogs.find((blog) => blog.id === findBlogiD);
-  console.log(findBlog);
 
   const handleShowReplyInputElement = (id) => {
     setCurrentState((prevState) => ({
@@ -21,9 +20,6 @@ function DetailBlog() {
   };
 
   const handleCancelButtonFun = (id) => {
-    console.log(id);
-    console.log(currentState.showReplyElement);
-
     setCurrentState((prevState) => {
       if (prevState.showReplyElement === id) {
         return {

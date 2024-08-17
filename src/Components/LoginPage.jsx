@@ -2,16 +2,16 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase";
+// import { doc, getDoc } from "firebase/firestore";
+// import { db } from "../firebase";
 // import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import BlogContext from "../Store/StoreInput";
-// import { useContext } from "react";
-// import fetchUserDetails from "../fetchUserDetails";
+import BlogContext from "../Store/StoreInput";
+import { useContext } from "react";
+import fetchUserDetails from "../fetchUserDetails";
 
 function LoginPage() {
-  // const { setUser } = useContext(BlogContext);
+  const { setUser } = useContext(BlogContext);
   const userId = useRef(null);
   const userPassword = useRef(null);
   const navigate = useNavigate();
@@ -21,8 +21,17 @@ function LoginPage() {
     const password = userPassword.current.value;
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/blogs");
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const userData = await fetchUserDetails();
+      if (userData) {
+        setUser(userData);
+
+        navigate("/blogs");
+      }
     } catch (error) {
       console.error("Invalid Credentials");
     }
@@ -39,6 +48,7 @@ function LoginPage() {
                 Email
               </label>
               <input
+                value="maneeshsettipeta@gmail.com"
                 className="max-h-full p-3 border outline-none rounded-md"
                 ref={userId}
                 placeholder="Please Enter your ID"
@@ -51,6 +61,7 @@ function LoginPage() {
                 Password
               </label>
               <input
+                value="Maneesh@123"
                 type="password"
                 className="max-h-full p-3 border outline-none rounded-md"
                 ref={userPassword}
@@ -75,7 +86,6 @@ function LoginPage() {
           </div>
         </div>
       </div>
-
     </>
   );
 }

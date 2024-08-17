@@ -13,7 +13,7 @@ import fetchUserDetails from "../fetchUserDetails";
 import { arrayRemove } from "firebase/firestore";
 
 const PostedBlog = ({ sendBlogsData }) => {
-  const { blogs, user } = useContext(BlogContext);
+  const { blogs, user, setUser } = useContext(BlogContext);
 
   const [currentState, setCurrentState] = useState({
     showInputField: null,
@@ -24,12 +24,12 @@ const PostedBlog = ({ sendBlogsData }) => {
     sendBlogRepliesButtonStatus: false,
   });
   const [isBookMarkSaved, setBookMark] = useState([]);
-
+  console.log(isBookMarkSaved);
   const fetchUserSavedBlogs = async () => {
     try {
       const response = await fetchUserDetails();
       const userSavedBookMarks = response.blogSaved;
-
+      setUser(response);
       setBookMark(userSavedBookMarks);
     } catch (error) {
       console.error("Error fetching user saved blogs", error);
@@ -100,8 +100,7 @@ const PostedBlog = ({ sendBlogsData }) => {
         followedUser.lastName.toLowerCase() === blog.lastName.toLowerCase()
     );
   }
-  const handleSaveBookmarkBlog = async (blog, flag) => {
-    console.log(flag);
+  const handleSaveBookmarkBlog = async (blog) => {
     try {
       const isAlreadySaved = isBookMarkSaved.includes(blog.id);
       const userDocRef = doc(db, "users", user.id);
@@ -157,11 +156,15 @@ const PostedBlog = ({ sendBlogsData }) => {
                 <div>
                   <div className="flex justify-end">
                     <p className=" p-1 text-lg mt-2  font-medium text-customcolorred">
-                      {blog.firstName + " " + blog.lastName}
+                      {blog?.firstName + " " + blog?.lastName}
                     </p>
                     <button
                       onClick={() =>
-                        handleSendFollow(blog.firstName, blog.lastName, blog.id)
+                        handleSendFollow(
+                          blog?.firstName,
+                          blog?.lastName,
+                          blog?.id
+                        )
                       }
                       className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
                     >
@@ -174,10 +177,10 @@ const PostedBlog = ({ sendBlogsData }) => {
                   </p>
                 </div>
               </div>
-              {currentState.showInputField === blog.id && (
+              {currentState.showInputField === blog?.id && (
                 <BlogReplyInput
-                  id={blog.id}
-                  sendFirebaseId={blog.id}
+                  id={blog?.id}
+                  sendFirebaseId={blog?.id}
                   sendOnClick={handleCancelButton}
                   replyOnClick={handleReplyClick}
                 />
@@ -186,12 +189,12 @@ const PostedBlog = ({ sendBlogsData }) => {
                 <p>
                   <button
                     className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-1 font-semibold "
-                    onClick={() => handleShowReplies(blog.id)}
+                    onClick={() => handleShowReplies(blog?.id)}
                   >
-                    Replies({handleShowRepliesLength(blog.id)})
+                    Replies({handleShowRepliesLength(blog?.id)})
                   </button>
                 </p>
-                {isBookMarkSaved.includes(blog.id) ? (
+                {isBookMarkSaved.includes(blog?.id) ? (
                   <button
                     className="mt-5 size-5"
                     onClick={() => handleSaveBookmarkBlog(blog)}
@@ -209,9 +212,9 @@ const PostedBlog = ({ sendBlogsData }) => {
                 )}
               </div>
               {currentState.sendBlogRepliesButtonStatus &&
-                currentState.blogReplies === blog.id && (
+                currentState.blogReplies === blog?.id && (
                   <ReplyDiscription
-                    sendId={blog.id}
+                    sendId={blog?.id}
                     sendBlogRepliesButtonStatus={
                       currentState.sendBlogRepliesButtonStatus
                     }

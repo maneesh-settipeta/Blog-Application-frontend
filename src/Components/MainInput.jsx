@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import BlogContext from "../Store/StoreInput";
 import fetchBlogs from "../fetchBlogs";
 import { db } from "../firebase";
-import { addDoc, arrayUnion, collection } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { updateDoc, doc } from "firebase/firestore";
 import Shimmer from "./Shimmer";
 import fetchUserDetails from "../fetchUserDetails";
@@ -10,50 +10,56 @@ import PostedBlog from "./PostedBlog";
 import { useLocation } from "react-router-dom";
 
 function MainInput() {
-  const { bulkBlog, addBlog, blogs, user, setUser, searchQuery } =
+  const { bulkBlog, addBlog, blogs, user, searchQuery } =
     useContext(BlogContext);
 
-  const [displayBlogs, setDisplayBlogs] = useState(blogs);
-
-  const fetchUserSavedBlogs = async () => {
-    try {
-      const response = await fetchUserDetails();
-      const userSavedBookMarks = response.savedBlogs;
-      console.log(userSavedBookMarks);
-      setDisplayBlogs(userSavedBookMarks);
-      setUser(response);
-    } catch (error) {
-      console.error("Error fetching user saved blogs", error);
-    }
-  };
-
+  const filteredBlogs = blogs.filter(
+    (blog) =>
+      blog.userTitle?.toLowerCase().includes(searchQuery) ||
+      `${blog?.firstName} ${blog?.lastName}`.toLowerCase().includes(searchQuery)
+  );
+  const [savedBlogs, setSavedBlogs] = useState([]);
+  console.log(savedBlogs);
   const location = useLocation();
-
-  async function fetchingUserDetails() {
-    const userData = await fetchUserDetails();
-    setUser(userData);
+  // const notFoundMessage = [
+  //   {
+  //     userTitle: "Not Found",
+  //     userinput: "",
+  //     dateCreated: "",
+  //     replies: [],
+  //     userID: "",
+  //     firstName: "",
+  //     lastName: "",
+  //     emial: "",
+  //   },
+  // ];
+  let displayBlogs;
+  if (filteredBlogs?.length > 0) {
+    displayBlogs = filteredBlogs;
   }
-  useEffect(() => {
-    fetchingUserDetails();
-    console.log(location.pathname);
-    if (location.pathname === "/blogs/bookMarks") {
-      fetchUserSavedBlogs();
-    } else {
-      setDisplayBlogs(blogs);
-    }
-  }, [location.pathname]);
+  // else if (filteredBlogs?.length === 0) {
+  //   displayBlogs = notFoundMessage;
+  // }
+  else if (location.pathname === "/blogs/bookmarks") {
+    displayBlogs = savedBlogs;
+  } else {
+    displayBlogs = blogs;
+  }
 
   const currentDate = new Date().toLocaleString();
 
-  useEffect(() => {}, [user.loggedInUserID]);
+  // useEffect(() => {}, [user.loggedInUserID]);
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getBlogs = async () => {
       const responseData = await fetchBlogs();
+      const responeUserData = await fetchUserDetails();
       bulkBlog(responseData);
       setLoading(false);
+      console.log(responeUserData.savedBlogs);
+      setSavedBlogs(responeUserData.savedBlogs);
     };
     getBlogs();
   }, []);
@@ -107,29 +113,13 @@ function MainInput() {
     currentState.uniqueID = newID;
   };
 
-  let filteredBlogs;
-  useEffect(() => {
-    filteredBlogs = blogs.filter(
-      (blog) =>
-        blog.userTitle?.toLowerCase().includes(searchQuery) ||
-        `${blog?.firstName} ${blog?.lastName}`
-          .toLowerCase()
-          .includes(searchQuery)
-    );
-    if (filteredBlogs?.length > 0) {
-      setDisplayBlogs(filteredBlogs);
-    }
-
-    console.log(filteredBlogs);
-  }, [searchQuery]);
-
   if (loading) {
     return <Shimmer />;
   }
 
   return (
     <>
-      <div className="flex justify-center bg-gray-50">
+      <div className="flex justify-center h-full bg-gray-50">
         <div className="w-full md:w-1/2 px-4 ">
           <button
             className="flex underline mb-2 text-customColor font-serif text-3xl  text-start "
@@ -175,7 +165,6 @@ function MainInput() {
               Conversations
             </h1>
             <PostedBlog sendBlogsData={displayBlogs} />
-            {/* <PostedBlog sendBlogsData={bookMarksBlogs} /> */}
           </div>
         </div>
       </div>

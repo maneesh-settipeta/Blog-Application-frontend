@@ -12,13 +12,13 @@ function ReplyDiscription({ sendId, sendBlogRepliesButtonStatus }) {
     <>
       <div>
         {sendBlogRepliesButtonStatus &&
-          getBlogDescription?.replies.map((eachReply, index) => (
+          getBlogDescription?.replies?.map((eachReply, index) => (
             <div
               key={index}
               className="border ml-10 mr-4 bg-customcolorwarmgray rounded-md mb-2 p-2"
             >
               <p className="p-1 font-medium line-clamp-5 text-ellipsis">
-                {eachReply.data}
+                {eachReply?.data}
               </p>
 
               <p className="flex justify-end text-customcolorred mr-2">

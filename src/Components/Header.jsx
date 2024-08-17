@@ -1,14 +1,16 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import BlogContext from "../Store/StoreInput";
 import ProfileDropDown from "./ProfileDropDown";
 import { FaSearch } from "react-icons/fa";
+
 function Header() {
   const { user, clearLocalStorage, handleSearchQuery } =
     useContext(BlogContext);
 
   const [isOpenMenu, setOpenMenu] = useState(false);
   const [searchQuery, setSearchingQuery] = useState("");
+  const dropdown = useRef();
   const handleOpenProfileMenu = () => {
     setOpenMenu(!isOpenMenu);
   };
@@ -18,9 +20,20 @@ function Header() {
     handleSearchQuery(searchQuery);
   };
 
-  useEffect(() => {}, [user?.firstName, user?.lastName]);
   const firstNameExtract = user?.firstName ? user?.firstName[0] : "";
   const secondNameExtract = user?.lastName ? user?.lastName[0] : "";
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!dropdown.current.contains(event.target)) {
+        setOpenMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
 
   return (
     <>
@@ -45,16 +58,17 @@ function Header() {
             </div>
           </div>
           <button
+            ref={dropdown}
             onClick={handleOpenProfileMenu}
-            className="rounded-full font-medium text-xl p-2 bg-customcolorred mr-7 "
+            className="rounded-full font-medium text-sm w-12 p-2 bg-customcolorred mr-7 "
           >
             {firstNameExtract + secondNameExtract}
+            <ProfileDropDown
+              clearLocalStorage={clearLocalStorage}
+              isOpen={isOpenMenu}
+              isClosedDropDown={() => handleOpenProfileMenu()}
+            />
           </button>
-          <ProfileDropDown
-            clearLocalStorage={clearLocalStorage}
-            isOpen={isOpenMenu}
-            isClosedDropDown={() => handleOpenProfileMenu()}
-          />
         </div>
       </div>
     </>

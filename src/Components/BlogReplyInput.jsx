@@ -24,8 +24,6 @@ function BlogReplyInput({ id, sendOnClick, replyOnClick, sendFirebaseId }) {
   }
 
   const handleOnClickCancel = (id) => {
-    console.log(id);
-
     sendOnClick(id);
   };
 
