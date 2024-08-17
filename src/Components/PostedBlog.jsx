@@ -14,6 +14,7 @@ import { arrayRemove } from "firebase/firestore";
 
 const PostedBlog = ({ sendBlogsData }) => {
   const { blogs, user, setUser } = useContext(BlogContext);
+  console.log(sendBlogsData);
 
   const [currentState, setCurrentState] = useState({
     showInputField: null,
@@ -24,7 +25,7 @@ const PostedBlog = ({ sendBlogsData }) => {
     sendBlogRepliesButtonStatus: false,
   });
   const [isBookMarkSaved, setBookMark] = useState([]);
-  console.log(isBookMarkSaved);
+
   const fetchUserSavedBlogs = async () => {
     try {
       const response = await fetchUserDetails();

@@ -28,6 +28,8 @@ function BlogReplyInput({ id, sendOnClick, replyOnClick, sendFirebaseId }) {
   };
 
   const handleSendRepliesData = async () => {
+    console.log(sendFirebaseId);
+
     const fireBaseBlogRef = doc(db, "blogs", sendFirebaseId);
     const newObjectReply = {
       data: replyInputState.data || " ",

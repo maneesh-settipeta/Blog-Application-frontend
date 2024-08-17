@@ -20,19 +20,19 @@ function MainInput() {
   );
   const [savedBlogs, setSavedBlogs] = useState([]);
   console.log(savedBlogs);
+
   const location = useLocation();
-  // const notFoundMessage = [
-  //   {
-  //     userTitle: "Not Found",
-  //     userinput: "",
-  //     dateCreated: "",
-  //     replies: [],
-  //     userID: "",
-  //     firstName: "",
-  //     lastName: "",
-  //     emial: "",
-  //   },
-  // ];
+  // const notFoundMessage = {
+  //   userTitle: "Not Found",
+  //   userinput: "",
+  //   dateCreated: "",
+  //   replies: [],
+  //   userID: "",
+  //   firstName: "",
+  //   lastName: "",
+  //   emial: "",
+  // };
+
   let displayBlogs;
   if (filteredBlogs?.length > 0) {
     displayBlogs = filteredBlogs;
@@ -57,9 +57,8 @@ function MainInput() {
       const responseData = await fetchBlogs();
       const responeUserData = await fetchUserDetails();
       bulkBlog(responseData);
-      setLoading(false);
-      console.log(responeUserData.savedBlogs);
       setSavedBlogs(responeUserData.savedBlogs);
+      setLoading(false);
     };
     getBlogs();
   }, []);
@@ -119,7 +118,7 @@ function MainInput() {
 
   return (
     <>
-      <div className="flex justify-center h-full bg-gray-50">
+      <div className="flex justify-center max-h-max bg-gray-50">
         <div className="w-full md:w-1/2 px-4 ">
           <button
             className="flex underline mb-2 text-customColor font-serif text-3xl  text-start "
