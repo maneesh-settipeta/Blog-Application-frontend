@@ -33,7 +33,7 @@ function Header() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  });
+  }, []);
 
   return (
     <>
@@ -62,7 +62,7 @@ function Header() {
             onClick={handleOpenProfileMenu}
             className="rounded-full font-medium text-sm w-12 p-2 bg-customcolorred mr-7 "
           >
-            {firstNameExtract + secondNameExtract}
+            {firstNameExtract.toUpperCase() + secondNameExtract.toUpperCase()}
             <ProfileDropDown
               clearLocalStorage={clearLocalStorage}
               isOpen={isOpenMenu}

@@ -8,12 +8,13 @@ import { auth } from "../firebase";
 import "react-toastify/dist/ReactToastify.css";
 import BlogContext from "../Store/StoreInput";
 import { useContext } from "react";
-import fetchUserDetails from "../fetchUserDetails";
+import useFetchUserData from "../useFetchUserData";
 
 function LoginPage() {
   const { setUser } = useContext(BlogContext);
-  const userId = useRef(null);
-  const userPassword = useRef(null);
+  const { userData } = useFetchUserData();
+  const userId = useRef("maneeshsettipeta@gmail.com");
+  const userPassword = useRef("Maneesh@123");
   const navigate = useNavigate();
 
   async function handleUserLogin() {
@@ -21,12 +22,8 @@ function LoginPage() {
     const password = userPassword.current.value;
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const userData = await fetchUserDetails();
+      await signInWithEmailAndPassword(auth, email, password);
+
       if (userData) {
         setUser(userData);
 
@@ -48,7 +45,6 @@ function LoginPage() {
                 Email
               </label>
               <input
-                value="maneeshsettipeta@gmail.com"
                 className="max-h-full p-3 border outline-none rounded-md"
                 ref={userId}
                 placeholder="Please Enter your ID"
@@ -61,7 +57,6 @@ function LoginPage() {
                 Password
               </label>
               <input
-                value="Maneesh@123"
                 type="password"
                 className="max-h-full p-3 border outline-none rounded-md"
                 ref={userPassword}

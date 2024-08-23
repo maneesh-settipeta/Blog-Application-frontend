@@ -9,12 +9,15 @@ import { doc } from "firebase/firestore";
 import { updateDoc } from "firebase/firestore";
 import BlogContext from "../Store/StoreInput";
 import { arrayUnion } from "firebase/firestore";
-import fetchUserDetails from "../fetchUserDetails";
+import useFetchUserData from "../useFetchUserData";
 import { arrayRemove } from "firebase/firestore";
+import { FcLike } from "react-icons/fc";
+import { FaRegHeart } from "react-icons/fa";
 
 const PostedBlog = ({ sendBlogsData }) => {
   const { blogs, user, setUser } = useContext(BlogContext);
-  console.log(sendBlogsData);
+
+  const { userData } = useFetchUserData();
 
   const [currentState, setCurrentState] = useState({
     showInputField: null,
@@ -26,12 +29,13 @@ const PostedBlog = ({ sendBlogsData }) => {
   });
   const [isBookMarkSaved, setBookMark] = useState([]);
 
-  const fetchUserSavedBlogs = async () => {
+  const [isBlogLiked, setBlogLike] = useState([]);
+
+  const fetchUserSavedBlogs = () => {
     try {
-      const response = await fetchUserDetails();
-      const userSavedBookMarks = response.blogSaved;
-      setUser(response);
-      setBookMark(userSavedBookMarks);
+      setUser(userData);
+      setBlogLike(userData.blogLike);
+      setBookMark(userData.blogSaved);
     } catch (error) {
       console.error("Error fetching user saved blogs", error);
     }
@@ -39,7 +43,7 @@ const PostedBlog = ({ sendBlogsData }) => {
 
   useEffect(() => {
     fetchUserSavedBlogs();
-  }, []);
+  }, [userData]);
 
   const handleShowInput = (id) => {
     setCurrentState((prevState) => ({
@@ -59,6 +63,7 @@ const PostedBlog = ({ sendBlogsData }) => {
       return prevState;
     });
   };
+
   const handleShowReplies = (blogID) => {
     setCurrentState((prevState) => ({
       ...prevState,
@@ -88,6 +93,7 @@ const PostedBlog = ({ sendBlogsData }) => {
       console.error("Error Uploading");
     }
   };
+
   function handleShowRepliesLength(blogID) {
     const findBlogForReplyLength = blogs.find((blog) => blog.id === blogID);
     const lengthOfReplies = findBlogForReplyLength.replies.length;
@@ -101,6 +107,7 @@ const PostedBlog = ({ sendBlogsData }) => {
         followedUser.lastName.toLowerCase() === blog.lastName.toLowerCase()
     );
   }
+
   const handleSaveBookmarkBlog = async (blog) => {
     try {
       const isAlreadySaved = isBookMarkSaved.includes(blog.id);
@@ -117,6 +124,29 @@ const PostedBlog = ({ sendBlogsData }) => {
         await updateDoc(userDocRef, {
           savedBlogs: arrayUnion(blog),
           blogSaved: arrayUnion(blog.id),
+        });
+      }
+    } catch (error) {
+      console.error("Error Uploading");
+    }
+  };
+
+  const handleLikeButton = async (id) => {
+    try {
+      const isAlreadyBlogLiked = isBlogLiked.includes(id);
+      const userDocRef = doc(db, "users", user.id);
+      if (isAlreadyBlogLiked) {
+        const test = setBlogLike((prevState) =>
+          prevState.filter((idValue) => idValue !== id)
+        );
+
+        await updateDoc(userDocRef, {
+          blogLike: arrayRemove(id),
+        });
+      } else {
+        setBlogLike((prevState) => [...prevState, id]);
+        await updateDoc(userDocRef, {
+          blogLike: arrayUnion(id),
         });
       }
     } catch (error) {
@@ -195,22 +225,45 @@ const PostedBlog = ({ sendBlogsData }) => {
                     Replies({handleShowRepliesLength(blog?.id)})
                   </button>
                 </p>
-                {isBookMarkSaved.includes(blog?.id) ? (
-                  <button
-                    className="mt-5 size-5"
-                    onClick={() => handleSaveBookmarkBlog(blog)}
-                  >
-                    <IoBookmark />
-                  </button>
-                ) : (
-                  <button
-                    className="mt-5 size-5"
-                    onClick={() => handleSaveBookmarkBlog(blog)}
-                  >
-                    {" "}
-                    <FaRegBookmark />
-                  </button>
-                )}
+                <div className="flex">
+                  <div>
+                    {isBlogLiked.includes(blog.id) ? (
+                      <button
+                        onClick={() => handleLikeButton(blog.id)}
+                        className="mt-5 w-12"
+                      >
+                        <FcLike />
+                        {isBlogLiked[blog.id]}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleLikeButton(blog.id)}
+                        className="mt-5 w-12"
+                      >
+                        <FaRegHeart />
+                        {isBlogLiked[blog.id]}
+                      </button>
+                    )}
+                  </div>
+                  <div>
+                    {isBookMarkSaved?.includes(blog?.id) ? (
+                      <button
+                        className="mt-4 size-6"
+                        onClick={() => handleSaveBookmarkBlog(blog)}
+                      >
+                        <IoBookmark />
+                      </button>
+                    ) : (
+                      <button
+                        className="mt-4 size-6"
+                        onClick={() => handleSaveBookmarkBlog(blog)}
+                      >
+                        {" "}
+                        <FaRegBookmark />
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
               {currentState.sendBlogRepliesButtonStatus &&
                 currentState.blogReplies === blog?.id && (

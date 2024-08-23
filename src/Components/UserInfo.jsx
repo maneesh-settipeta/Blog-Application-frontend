@@ -1,17 +1,12 @@
 import BlogContext from "../Store/StoreInput";
 import { useContext, useEffect } from "react";
+import useFetchUserData from "../useFetchUserData";
 function UserInfo() {
   const { user } = useContext(BlogContext);
+  const { userData } = useFetchUserData();
 
-  useEffect(() => {}, [
-    user.firstName,
-    user.lastName,
-    user.email,
-    user.following,
-  ]);
-
-  const firstNameFirstCharExtract = user.firstName[0];
-  const firstNameLastCharExtract = user.lastName[0];
+  const firstNameFirstCharExtract = userData?.firstName[0];
+  const firstNameLastCharExtract = userData?.lastName[0];
   return (
     <>
       <div className=" flex-col justify-center h-screen pr-40 pl-40 pt-32">
@@ -26,7 +21,7 @@ function UserInfo() {
           <h1 className="text-customcolorred font-medium underline  text-lg">
             Following :
           </h1>
-          {user.following.map((eachUserData, index) => (
+          {userData?.following.map((eachUserData, index) => (
             <div key={index}>
               <li className="text-customColor font-medium text-base">
                 {" "}

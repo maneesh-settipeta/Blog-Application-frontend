@@ -3,24 +3,24 @@ import BlogContext from "../Store/StoreInput";
 import UserInfo from "./UserInfo";
 import MyBlogs from "./MyBlogs";
 import MySavedBlogs from "./MySavedBlogs";
-import fetchUserDetails from "../fetchUserDetails";
-import fetchBlogs from "../fetchBlogs";
-// import fetchBlogs from "../fetchBlogs";
+import useFetchBlogs from "../useFetchBlogs";
+import useFetchUserData from "../useFetchUserData";
 
 function Profile() {
   const { user, setUser, addBlog } = useContext(BlogContext);
 
-  const fetchUserAndBlogsData = async () => {
-    const userData = await fetchUserDetails();
-    const blogsData = await fetchBlogs();
+  const { blogsData } = useFetchBlogs();
+  const { userData } = useFetchUserData();
 
+  const fetchUserAndBlogsData = () => {
+    // const userData = await fetchUserDetails();
     setUser(userData);
     addBlog(blogsData);
   };
 
   useEffect(() => {
     fetchUserAndBlogsData();
-  }, []);
+  }, [blogsData, userData]);
 
   const [showMyBlogs, setShowMyBlogs] = useState(true);
   const [showSavedBlogs, setShowSavedBlogs] = useState(false);

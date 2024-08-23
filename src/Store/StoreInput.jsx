@@ -1,6 +1,6 @@
 import { createContext, useReducer } from "react";
 // import { auth } from "../firebase";
-import fetchBlogs from "../fetchBlogs";
+// import fetchBlogs from "../fetchBlogs";
 
 const BlogContext = createContext({
   blogs: [],
@@ -14,7 +14,7 @@ const BlogContext = createContext({
     email: null,
     following: [],
   },
-  searchQuery: null,
+  searchQuery: "",
   addBlog: () => {},
   editReply: () => {},
   addReplies: () => {},
@@ -92,7 +92,7 @@ export function ProjectContext({ children }) {
         email: null,
         following: [],
       },
-      searchQuery: null,
+      searchQuery: "",
     }
   );
   projectStateReducer.user.email;

@@ -1,14 +1,19 @@
+import { useEffect, useState } from "react";
 import { auth, db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
-async function fetchUserDetails() {
-  return new Promise((resolve, reject) => {
+
+function useFetchUserData() {
+  const [userData, setUserData] = useState(null);
+
+  const [error, setErrorStatus] = useState(null);
+  useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         const docRef = doc(db, "users", user.uid);
         try {
           const userData = await getDoc(docRef);
           if (userData.exists()) {
-            resolve(userData.data());
+            setUserData(userData.data());
           } else {
             console.error("No user Details found");
           }
@@ -16,9 +21,14 @@ async function fetchUserDetails() {
           console.error("error while fetching");
         }
       } else {
-        reject("User fetching data rejected");
+        setErrorStatus("User fetching data rejected");
       }
     });
-  });
+  }, []);
+  return {
+    userData,
+    error,
+  };
 }
-export default fetchUserDetails;
+
+export default useFetchUserData;

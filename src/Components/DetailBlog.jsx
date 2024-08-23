@@ -21,8 +21,6 @@ function DetailBlog({ id }) {
   const handleReplyClick = () => {};
 
   const handleCancelButtonFun = (id) => {
-    console.log(id, "ID in this");
-
     setCurrentState((prevState) => {
       if (prevState.showReplyElement === id) {
         return {

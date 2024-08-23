@@ -8,8 +8,8 @@ function ProfileDropDown({ isOpen, clearLocalStorage, isClosedDropDown }) {
   return (
     <>
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-4 w-40 flex  rounded-md shadow-lg bg-white  focus:outline-none">
-          <div>
+        <div className="origin-top-right absolute right-0 mt-4 w-40   rounded-md shadow-lg bg-white  focus:outline-none">
+          <div className="flex-col text-left">
             <Link to="bookmarks">
               <p className="block px-4 py-2 text-lg w-40 text-customColor hover:bg-gray-100">
                 Bookmarks
