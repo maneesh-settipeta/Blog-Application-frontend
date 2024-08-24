@@ -161,51 +161,92 @@ const PostedBlog = ({ sendBlogsData }) => {
         sendBlogsData.map((blog) => {
           return (
             <div
-              className="w-full h-auto    mb-2 mt-2 rounded-md bg-white  shadow-customColorbeige shadow-md  p-4"
+              className="w-full h-auto    mb-2 mt-2 p-4"
               key={blog?.blogID + blog?.firstName + blog?.dateCreated}
             >
+              <div className="flex">
+                <p className=" p-1 text-lg mt-2  ml-3  ">
+                  {blog?.firstName + " " + blog?.lastName}
+                </p>
+                <button
+                  onClick={() =>
+                    handleSendFollow(blog?.firstName, blog?.lastName, blog?.id)
+                  }
+                  className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
+                >
+                  {" "}
+                  {isFollowing(blog) ? "Following" : "Follow"}
+                </button>
+              </div>
               <Link to={`/blogs/${blog.id}`} state={{ blogid: blog.id }}>
-                <h1 className="pl-4 font-serif text-3xl p-2 ">
+                <h1 className="pl-4 font-bold text-3xl p-2 ">
                   {blog?.userTitle}
                 </h1>
-                <p className="pl-4 line-clamp-5 text-ellipsis ">
+                <p className="pl-4 line-clamp-5 text-ellipsis text-gray-700 ">
                   {blog?.userinput}
                 </p>
               </Link>
-              <div className="flex justify-between">
-                <div>
+              <div className=" flex justify-between">
+                <div className="flex">
+                  <p className="flex  p-1 text-base ml-3 font-medium mt-7 text-customColor">
+                    {blog?.dateCreated}
+                  </p>
                   <p>
                     <button
-                      className="font-sans text-lg mb-3 text-white bg-customcolorred p-2 rounded-md ml-4  mt-4 font-semibold "
+                      className="font-sans text-lg mb-3 border border-customcolorred p-1 w-20 rounded-md ml-4  mt-6 font-semibold "
                       onClick={() => handleShowInput(blog?.id)}
                     >
                       {" "}
                       Reply
                     </button>
                   </p>
-                </div>
-                <div>
-                  <div className="flex justify-end">
-                    <p className=" p-1 text-lg mt-2  font-medium text-customcolorred">
-                      {blog?.firstName + " " + blog?.lastName}
-                    </p>
+                  <p>
                     <button
-                      onClick={() =>
-                        handleSendFollow(
-                          blog?.firstName,
-                          blog?.lastName,
-                          blog?.id
-                        )
-                      }
-                      className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
+                      className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-6 font-semibold "
+                      onClick={() => handleShowReplies(blog?.id)}
                     >
-                      {" "}
-                      {isFollowing(blog) ? "Following" : "Follow"}
+                      Replies({handleShowRepliesLength(blog?.id)})
                     </button>
-                  </div>
-                  <p className="flex justify-end p-1 text-base font-medium text-customColor">
-                    Created on: {blog?.dateCreated}
                   </p>
+                </div>
+                <div className="flex">
+                  <div>
+                    {isBlogLiked.includes(blog.id) ? (
+                      <button
+                        onClick={() => handleLikeButton(blog.id)}
+                        className="mt-8 w-12"
+                      >
+                        <FcLike />
+                        {isBlogLiked[blog.id]}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleLikeButton(blog.id)}
+                        className="mt-8 w-12"
+                      >
+                        <FaRegHeart />
+                        {isBlogLiked[blog.id]}
+                      </button>
+                    )}
+                  </div>
+                  <div>
+                    {isBookMarkSaved?.includes(blog?.id) ? (
+                      <button
+                        className="mt-7 size-6"
+                        onClick={() => handleSaveBookmarkBlog(blog)}
+                      >
+                        <IoBookmark />
+                      </button>
+                    ) : (
+                      <button
+                        className="mt-7 size-6"
+                        onClick={() => handleSaveBookmarkBlog(blog)}
+                      >
+                        {" "}
+                        <FaRegBookmark />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
               {currentState.showInputField === blog?.id && (
@@ -216,55 +257,6 @@ const PostedBlog = ({ sendBlogsData }) => {
                   replyOnClick={handleReplyClick}
                 />
               )}
-              <div className="flex justify-between">
-                <p>
-                  <button
-                    className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-1 font-semibold "
-                    onClick={() => handleShowReplies(blog?.id)}
-                  >
-                    Replies({handleShowRepliesLength(blog?.id)})
-                  </button>
-                </p>
-                <div className="flex">
-                  <div>
-                    {isBlogLiked.includes(blog.id) ? (
-                      <button
-                        onClick={() => handleLikeButton(blog.id)}
-                        className="mt-5 w-12"
-                      >
-                        <FcLike />
-                        {isBlogLiked[blog.id]}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleLikeButton(blog.id)}
-                        className="mt-5 w-12"
-                      >
-                        <FaRegHeart />
-                        {isBlogLiked[blog.id]}
-                      </button>
-                    )}
-                  </div>
-                  <div>
-                    {isBookMarkSaved?.includes(blog?.id) ? (
-                      <button
-                        className="mt-4 size-6"
-                        onClick={() => handleSaveBookmarkBlog(blog)}
-                      >
-                        <IoBookmark />
-                      </button>
-                    ) : (
-                      <button
-                        className="mt-4 size-6"
-                        onClick={() => handleSaveBookmarkBlog(blog)}
-                      >
-                        {" "}
-                        <FaRegBookmark />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
               {currentState.sendBlogRepliesButtonStatus &&
                 currentState.blogReplies === blog?.id && (
                   <ReplyDiscription
@@ -274,6 +266,7 @@ const PostedBlog = ({ sendBlogsData }) => {
                     }
                   />
                 )}
+              <hr className="mt-1 mb-1"></hr>
             </div>
           );
         })}

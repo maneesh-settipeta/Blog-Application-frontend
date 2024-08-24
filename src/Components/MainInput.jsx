@@ -128,10 +128,10 @@ function MainInput() {
   }
 
   return (
-    <div className="flex justify-center max-h-max bg-gray-50">
+    <div className="flex justify-center max-h-max">
       <div className="w-full md:w-1/2 px-4 ">
         <button
-          className="flex underline mb-2 text-customColor font-serif text-3xl  text-start "
+          className="flex underline mb-2 text-customColor font-medium text-3xl  text-start "
           onClick={handleToggleInputs}
         >
           {currentState.toggleInput ? "Write a post" : "Post Blog"}
