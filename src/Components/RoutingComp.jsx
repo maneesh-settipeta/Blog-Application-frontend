@@ -8,11 +8,12 @@ import MainInput from "./MainInput";
 import DetailBlog from "./DetailBlog";
 import LoginPage from "./LoginPage";
 import SignUp from "./SignUp";
-import { useState, useEffect } from "react";
-import Shimmer from "./Shimmer";
+// import { useState, useEffect } from "react";
+// import Shimmer from "./Shimmer";
 import Profile from "./Profile";
-import SignUp2 from "./SignUp2";
-import SignUpUpdated from "./SignupUpdated";
+// import SignUp2 from "./SignUp2";
+// import SignUpUpdated from "./SignupUpdated";
+
 // function ProtectedRoute({ element, redirectPath }) {
 //   const [isAuthorized, setisAuthorized] = useState(() => {
 //     return localStorage.length > 0;
@@ -27,7 +28,7 @@ const routerComp = createBrowserRouter([
     element: <Navigate to="/Login" />,
   },
   { path: "/Login", element: <LoginPage /> },
-  { path: "/SignUp", element: <SignUpUpdated /> },
+  { path: "/SignUp", element: <SignUp /> },
 
   {
     path: "/blogs",

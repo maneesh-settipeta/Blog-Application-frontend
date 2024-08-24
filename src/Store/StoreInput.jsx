@@ -12,7 +12,6 @@ const BlogContext = createContext({
     lastName: localStorage.getItem("lastName"),
     id: null,
     email: null,
-    following: [],
   },
   searchQuery: "",
   addBlog: () => {},
@@ -90,7 +89,6 @@ export function ProjectContext({ children }) {
         lastName: localStorage.getItem("lastName"),
         id: null,
         email: null,
-        following: [],
       },
       searchQuery: "",
     }

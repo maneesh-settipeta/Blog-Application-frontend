@@ -29,6 +29,11 @@ function SignUp() {
         password: password,
         id: user.uid,
         following: [],
+        blogLike: [],
+        bookmarks: [],
+        likedBlog: [],
+        savedBlogs: [],
+        followingUserDetails: [],
       };
       const userDataWithId = await setDoc(doc(db, "users", user.uid), userData);
     } catch (error) {

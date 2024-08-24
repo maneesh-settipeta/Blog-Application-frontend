@@ -26,7 +26,11 @@ const PostedBlog = ({ sendBlogsData }) => {
     uniqueID: 0,
     toggleInput: false,
     sendBlogRepliesButtonStatus: false,
+    following: [],
+    followingUserDetails: [],
   });
+  console.log(currentState.following);
+
   const [isBookMarkSaved, setBookMark] = useState([]);
 
   const [isBlogLiked, setBlogLike] = useState([]);
@@ -35,7 +39,12 @@ const PostedBlog = ({ sendBlogsData }) => {
     try {
       setUser(userData);
       setBlogLike(userData.blogLike);
-      setBookMark(userData.blogSaved);
+      setBookMark(userData.bookmarks);
+      console.log(userData.following);
+      setCurrentState((prevState) => ({
+        ...prevState,
+        following: userData.following,
+      }));
     } catch (error) {
       console.error("Error fetching user saved blogs", error);
     }
@@ -79,18 +88,40 @@ const PostedBlog = ({ sendBlogsData }) => {
     }));
   };
   const handleSendFollow = async (firstName, lastName, id) => {
+    const userDocRef = doc(db, "users", user.id);
     const userFollowing = {
       firstName,
       lastName,
       id,
     };
-    try {
-      const userDocRef = doc(db, "users", user.id);
+    const ifUserFollowing = currentState.following.includes(id);
+    if (ifUserFollowing) {
+      const unFollow = currentState.following.filter(
+        (followingId) => followingId !== id
+      );
+      console.log(unFollow);
+      setCurrentState((prevState) => ({
+        ...prevState,
+        following: unFollow,
+      }));
       await updateDoc(userDocRef, {
-        following: arrayUnion(userFollowing),
+        followingUserDetails: arrayRemove(userFollowing),
+        following: arrayRemove(id),
       });
-    } catch (error) {
-      console.error("Error Uploading");
+    } else {
+      try {
+        setCurrentState((prevState) => ({
+          ...prevState,
+          followingUserDetails: [...currentState.following, userFollowing],
+          following: [...currentState.following, id],
+        }));
+        await updateDoc(userDocRef, {
+          followingUserDetails: arrayUnion(userFollowing),
+          following: arrayUnion(id),
+        });
+      } catch (error) {
+        console.error("Error Uploading");
+      }
     }
   };
 
@@ -98,14 +129,6 @@ const PostedBlog = ({ sendBlogsData }) => {
     const findBlogForReplyLength = blogs.find((blog) => blog.id === blogID);
     const lengthOfReplies = findBlogForReplyLength.replies.length;
     return lengthOfReplies;
-  }
-
-  function isFollowing(blog) {
-    return user.following?.some(
-      (followedUser) =>
-        followedUser.firstName.toLowerCase() === blog.firstName.toLowerCase() &&
-        followedUser.lastName.toLowerCase() === blog.lastName.toLowerCase()
-    );
   }
 
   const handleSaveBookmarkBlog = async (blog) => {
@@ -117,13 +140,13 @@ const PostedBlog = ({ sendBlogsData }) => {
 
         await updateDoc(userDocRef, {
           savedBlogs: arrayRemove(blog),
-          blogSaved: arrayRemove(blog.id),
+          bookmarks: arrayRemove(blog.id),
         });
       } else {
         setBookMark((prevState) => [...prevState, blog.id]);
         await updateDoc(userDocRef, {
           savedBlogs: arrayUnion(blog),
-          blogSaved: arrayUnion(blog.id),
+          bookmarks: arrayUnion(blog.id),
         });
       }
     } catch (error) {
@@ -155,122 +178,139 @@ const PostedBlog = ({ sendBlogsData }) => {
   };
 
   return (
-    <div>
+    <>
       {" "}
-      {sendBlogsData &&
-        sendBlogsData.map((blog) => {
-          return (
-            <div
-              className="w-full h-auto    mb-2 mt-2 p-4"
-              key={blog?.blogID + blog?.firstName + blog?.dateCreated}
-            >
-              <div className="flex">
-                <p className=" p-1 text-lg mt-2  ml-3  ">
-                  {blog?.firstName + " " + blog?.lastName}
-                </p>
+      {sendBlogsData?.map((blog) => {
+        return (
+          <div
+            className="w-full h-auto    mb-2 mt-2 p-4"
+            key={blog?.blogID + blog?.firstName + blog?.dateCreated}
+          >
+            <div className="flex">
+              <p className=" p-1 text-lg mt-2  ml-3  ">
+                {blog?.firstName + " " + blog?.lastName}
+              </p>
+              {currentState.following?.includes(blog?.userID) ? (
                 <button
                   onClick={() =>
-                    handleSendFollow(blog?.firstName, blog?.lastName, blog?.id)
+                    handleSendFollow(
+                      blog?.firstName,
+                      blog?.lastName,
+                      blog?.userID
+                    )
                   }
                   className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
                 >
-                  {" "}
-                  {isFollowing(blog) ? "Following" : "Follow"}
+                  Following
                 </button>
-              </div>
-              <Link to={`/blogs/${blog.id}`} state={{ blogid: blog.id }}>
-                <h1 className="pl-4 font-bold text-3xl p-2 ">
-                  {blog?.userTitle}
-                </h1>
-                <p className="pl-4 line-clamp-5 text-ellipsis text-gray-700 ">
-                  {blog?.userinput}
+              ) : (
+                <button
+                  onClick={() =>
+                    handleSendFollow(
+                      blog?.firstName,
+                      blog?.lastName,
+                      blog?.userID
+                    )
+                  }
+                  className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
+                >
+                  Follow
+                </button>
+              )}
+            </div>
+            <Link to={`/blogs/${blog.id}`} state={{ blogid: blog.id }}>
+              <h1 className="pl-4 font-bold text-3xl p-2 ">
+                {blog?.userTitle}
+              </h1>
+              <p className="pl-4 line-clamp-5 text-ellipsis text-gray-700 ">
+                {blog?.userinput}
+              </p>
+            </Link>
+            <div className=" flex justify-between">
+              <div className="flex">
+                <p className="flex  p-1 text-base ml-3 font-medium mt-7 text-customColor">
+                  {blog?.dateCreated}
                 </p>
-              </Link>
-              <div className=" flex justify-between">
-                <div className="flex">
-                  <p className="flex  p-1 text-base ml-3 font-medium mt-7 text-customColor">
-                    {blog?.dateCreated}
-                  </p>
-                  <p>
+                <p>
+                  <button
+                    className="font-sans text-lg mb-3 border border-customcolorred p-1 w-20 rounded-md ml-4  mt-6 font-semibold "
+                    onClick={() => handleShowInput(blog?.id)}
+                  >
+                    {" "}
+                    Reply
+                  </button>
+                </p>
+                <p>
+                  <button
+                    className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-6 font-semibold "
+                    onClick={() => handleShowReplies(blog?.id)}
+                  >
+                    Replies({handleShowRepliesLength(blog?.id)})
+                  </button>
+                </p>
+              </div>
+              <div className="flex">
+                <div>
+                  {isBlogLiked.includes(blog.id) ? (
                     <button
-                      className="font-sans text-lg mb-3 border border-customcolorred p-1 w-20 rounded-md ml-4  mt-6 font-semibold "
-                      onClick={() => handleShowInput(blog?.id)}
+                      onClick={() => handleLikeButton(blog.id)}
+                      className="mt-8 w-12"
+                    >
+                      <FcLike />
+                      {isBlogLiked[blog.id]}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleLikeButton(blog.id)}
+                      className="mt-8 w-12"
+                    >
+                      <FaRegHeart />
+                      {isBlogLiked[blog.id]}
+                    </button>
+                  )}
+                </div>
+                <div>
+                  {isBookMarkSaved?.includes(blog?.id) ? (
+                    <button
+                      className="mt-7 size-6"
+                      onClick={() => handleSaveBookmarkBlog(blog)}
+                    >
+                      <IoBookmark />
+                    </button>
+                  ) : (
+                    <button
+                      className="mt-7 size-6"
+                      onClick={() => handleSaveBookmarkBlog(blog)}
                     >
                       {" "}
-                      Reply
+                      <FaRegBookmark />
                     </button>
-                  </p>
-                  <p>
-                    <button
-                      className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-6 font-semibold "
-                      onClick={() => handleShowReplies(blog?.id)}
-                    >
-                      Replies({handleShowRepliesLength(blog?.id)})
-                    </button>
-                  </p>
-                </div>
-                <div className="flex">
-                  <div>
-                    {isBlogLiked.includes(blog.id) ? (
-                      <button
-                        onClick={() => handleLikeButton(blog.id)}
-                        className="mt-8 w-12"
-                      >
-                        <FcLike />
-                        {isBlogLiked[blog.id]}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleLikeButton(blog.id)}
-                        className="mt-8 w-12"
-                      >
-                        <FaRegHeart />
-                        {isBlogLiked[blog.id]}
-                      </button>
-                    )}
-                  </div>
-                  <div>
-                    {isBookMarkSaved?.includes(blog?.id) ? (
-                      <button
-                        className="mt-7 size-6"
-                        onClick={() => handleSaveBookmarkBlog(blog)}
-                      >
-                        <IoBookmark />
-                      </button>
-                    ) : (
-                      <button
-                        className="mt-7 size-6"
-                        onClick={() => handleSaveBookmarkBlog(blog)}
-                      >
-                        {" "}
-                        <FaRegBookmark />
-                      </button>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
-              {currentState.showInputField === blog?.id && (
-                <BlogReplyInput
-                  id={blog?.id}
-                  sendFirebaseId={blog?.id}
-                  sendOnClick={handleCancelButton}
-                  replyOnClick={handleReplyClick}
+            </div>
+            {currentState.showInputField === blog?.id && (
+              <BlogReplyInput
+                id={blog?.id}
+                sendFirebaseId={blog?.id}
+                sendOnClick={handleCancelButton}
+                replyOnClick={handleReplyClick}
+              />
+            )}
+            {currentState.sendBlogRepliesButtonStatus &&
+              currentState.blogReplies === blog?.id && (
+                <ReplyDiscription
+                  sendId={blog?.id}
+                  sendBlogRepliesButtonStatus={
+                    currentState.sendBlogRepliesButtonStatus
+                  }
                 />
               )}
-              {currentState.sendBlogRepliesButtonStatus &&
-                currentState.blogReplies === blog?.id && (
-                  <ReplyDiscription
-                    sendId={blog?.id}
-                    sendBlogRepliesButtonStatus={
-                      currentState.sendBlogRepliesButtonStatus
-                    }
-                  />
-                )}
-              <hr className="mt-1 mb-1"></hr>
-            </div>
-          );
-        })}
-    </div>
+            <hr className="mt-1 mb-1"></hr>
+          </div>
+        );
+      })}
+    </>
   );
 };
 
