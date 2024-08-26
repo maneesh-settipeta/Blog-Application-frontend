@@ -9,6 +9,10 @@ export default {
         customColorYellow: "#DCF81E",
         customColorbeige: "#E3F2FD",
         customcolorwarmgray: "#F5F5F5",
+        customcolorredHover: "#f01304",
+      },
+      screens: {
+        xs: "370px",
       },
     },
   },

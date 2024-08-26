@@ -128,8 +128,8 @@ function MainInput() {
   }
 
   return (
-    <div className="flex justify-center max-h-max">
-      <div className="w-full md:w-1/2 px-4 ">
+    <div className="flex justify-center">
+      <div className="xs:w-full md:w-1/2 px-4  max-h-max ">
         <button
           className="flex underline mb-2 text-customColor font-medium text-3xl  text-start "
           onClick={handleToggleInputs}

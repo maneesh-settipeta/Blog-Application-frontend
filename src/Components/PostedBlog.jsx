@@ -183,7 +183,7 @@ const PostedBlog = ({ sendBlogsData }) => {
       {sendBlogsData?.map((blog) => {
         return (
           <div
-            className="w-full h-auto    mb-2 mt-2 p-4"
+            className="h-auto    mb-2 mt-2 "
             key={blog?.blogID + blog?.firstName + blog?.dateCreated}
           >
             <div className="flex">
@@ -226,14 +226,14 @@ const PostedBlog = ({ sendBlogsData }) => {
                 {blog?.userinput}
               </p>
             </Link>
-            <div className=" flex justify-between">
-              <div className="flex">
-                <p className="flex  p-1 text-base ml-3 font-medium mt-7 text-customColor">
+            <div className=" flex justify-between ">
+              <div className="xs:flex-col sm:flex-row md:flex-row lg:flex-row">
+                <p className="flex  p-1 text-base ml-3 font-medium mt-7 xs:mt-2 text-customColor">
                   {blog?.dateCreated}
                 </p>
                 <p>
                   <button
-                    className="font-sans text-lg mb-3 border border-customcolorred p-1 w-20 rounded-md ml-4  mt-6 font-semibold "
+                    className="font-sans text-lg mb-3 border xs:pt-0 hover:bg-customcolorred hover:text-white border-customcolorred p-1 w-20 rounded-md ml-4 xs:mt-2 mt-6 font-semibold "
                     onClick={() => handleShowInput(blog?.id)}
                   >
                     {" "}
@@ -242,48 +242,36 @@ const PostedBlog = ({ sendBlogsData }) => {
                 </p>
                 <p>
                   <button
-                    className="font-sans text-lg  text-black p-1  underline rounded-md ml-3 mb-2  mt-6 font-semibold "
+                    className="font-sans text-lg  text-black p-1  xs:mt-1  underline rounded-md ml-3 mb-2  mt-6 font-semibold "
                     onClick={() => handleShowReplies(blog?.id)}
                   >
                     Replies({handleShowRepliesLength(blog?.id)})
                   </button>
                 </p>
               </div>
-              <div className="flex">
+              <div className="lg:flex-col">
                 <div>
                   {isBlogLiked.includes(blog.id) ? (
-                    <button
-                      onClick={() => handleLikeButton(blog.id)}
-                      className="mt-8 w-12"
-                    >
-                      <FcLike />
+                    <button onClick={() => handleLikeButton(blog.id)}>
+                      <FcLike className="mt-8 xs:mt-10 w-12 xs:w-14 size-8" />
                       {isBlogLiked[blog.id]}
                     </button>
                   ) : (
-                    <button
-                      onClick={() => handleLikeButton(blog.id)}
-                      className="mt-8 w-12"
-                    >
-                      <FaRegHeart />
+                    <button onClick={() => handleLikeButton(blog.id)}>
+                      <FaRegHeart className="mt-8 xs:mt-10 w-12 xs:w-14 size-8" />
                       {isBlogLiked[blog.id]}
                     </button>
                   )}
                 </div>
                 <div>
                   {isBookMarkSaved?.includes(blog?.id) ? (
-                    <button
-                      className="mt-7 size-6"
-                      onClick={() => handleSaveBookmarkBlog(blog)}
-                    >
-                      <IoBookmark />
+                    <button onClick={() => handleSaveBookmarkBlog(blog)}>
+                      <IoBookmark className="mt-8 xs:mt-4 w-12 xs:w-14 size-6" />
                     </button>
                   ) : (
-                    <button
-                      className="mt-7 size-6"
-                      onClick={() => handleSaveBookmarkBlog(blog)}
-                    >
+                    <button onClick={() => handleSaveBookmarkBlog(blog)}>
                       {" "}
-                      <FaRegBookmark />
+                      <FaRegBookmark className="mt-8 xs:mt-4 w-12 xs:w-14 size-6" />
                     </button>
                   )}
                 </div>
