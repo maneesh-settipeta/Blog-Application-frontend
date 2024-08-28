@@ -36,7 +36,8 @@ function LoginPage() {
 
   return (
     <div className="bg-customColor h-screen flex items-center justify-center p-4 ">
-      <div className="bg-[#f7f7f7] p-7 rounded-md border  xs:w-fit  w-1/4 sm:w-fit h-1/2 lg:w-96">
+      <div className="bg-[#f7f7f7] p-7 rounded-md border  xs:w-fit xs:h-fit w-1/4 sm:w-fit h-1/2 lg:w-96">
+        <h1 className="text-xl font-bold flex justify-center">Login</h1>
         <div>
           <p className="flex flex-col py-2">
             <label className="text-2xl font-medium text-customColor">
@@ -74,7 +75,7 @@ function LoginPage() {
         <div className="flex justify-center mt-5">
           <Link to="/SignUp">
             <button className="text-base mt-2 font-medium text-customColor  underline">
-              Dont have an Account Sign-Up!
+              Dont have an Account? Sign-Up Here
             </button>
           </Link>
         </div>

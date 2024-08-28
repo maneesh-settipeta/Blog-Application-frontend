@@ -38,12 +38,12 @@ const PostedBlog = ({ sendBlogsData }) => {
   const fetchUserSavedBlogs = () => {
     try {
       setUser(userData);
-      setBlogLike(userData.blogLike);
-      setBookMark(userData.bookmarks);
-      console.log(userData.following);
+      setBlogLike(userData?.blogLike);
+      setBookMark(userData?.bookmarks);
+      console.log(userData?.following);
       setCurrentState((prevState) => ({
         ...prevState,
-        following: userData.following,
+        following: userData?.following,
       }));
     } catch (error) {
       console.error("Error fetching user saved blogs", error);
@@ -94,7 +94,7 @@ const PostedBlog = ({ sendBlogsData }) => {
       lastName,
       id,
     };
-    const ifUserFollowing = currentState.following.includes(id);
+    const ifUserFollowing = currentState.following?.includes(id);
     if (ifUserFollowing) {
       const unFollow = currentState.following.filter(
         (followingId) => followingId !== id
@@ -133,7 +133,7 @@ const PostedBlog = ({ sendBlogsData }) => {
 
   const handleSaveBookmarkBlog = async (blog) => {
     try {
-      const isAlreadySaved = isBookMarkSaved.includes(blog.id);
+      const isAlreadySaved = isBookMarkSaved?.includes(blog.id);
       const userDocRef = doc(db, "users", user.id);
       if (isAlreadySaved) {
         setBookMark((prevState) => prevState.filter((id) => id !== blog.id));
@@ -156,7 +156,7 @@ const PostedBlog = ({ sendBlogsData }) => {
 
   const handleLikeButton = async (id) => {
     try {
-      const isAlreadyBlogLiked = isBlogLiked.includes(id);
+      const isAlreadyBlogLiked = isBlogLiked?.includes(id);
       const userDocRef = doc(db, "users", user.id);
       if (isAlreadyBlogLiked) {
         const test = setBlogLike((prevState) =>
@@ -186,6 +186,7 @@ const PostedBlog = ({ sendBlogsData }) => {
             className="h-auto    mb-2 mt-2 "
             key={blog?.blogID + blog?.firstName + blog?.dateCreated}
           >
+            <hr className="mt-1 mb-1"></hr>
             <div className="flex">
               <p className=" p-1 text-lg mt-2  ml-3  ">
                 {blog?.firstName + " " + blog?.lastName}
@@ -226,9 +227,9 @@ const PostedBlog = ({ sendBlogsData }) => {
                 {blog?.userinput}
               </p>
             </Link>
-            <div className=" flex justify-between ">
-              <div className="xs:flex-col sm:flex-row md:flex-row lg:flex-row">
-                <p className="flex  p-1 text-base ml-3 font-medium mt-7 xs:mt-2 text-customColor">
+            <div className=" flex justify-between md:mt-3 ">
+              <div className="flex xs:flex-col md:flex-row">
+                <p className="  p-1 text-base ml-3 font-medium mt-7 xs:mt-2 text-customColor">
                   {blog?.dateCreated}
                 </p>
                 <p>
@@ -249,29 +250,27 @@ const PostedBlog = ({ sendBlogsData }) => {
                   </button>
                 </p>
               </div>
-              <div className="lg:flex-col">
+              <div className="flex xs:flex-col md:flex-row">
                 <div>
-                  {isBlogLiked.includes(blog.id) ? (
-                    <button onClick={() => handleLikeButton(blog.id)}>
-                      <FcLike className="mt-8 xs:mt-10 w-12 xs:w-14 size-8" />
-                      {isBlogLiked[blog.id]}
+                  {isBlogLiked?.includes(blog?.id) ? (
+                    <button onClick={() => handleLikeButton(blog?.id)}>
+                      <FcLike className="lg:mt-3 xs:mt-12 w-12 xs:w-14 lg:size-6 xs:size-7" />
                     </button>
                   ) : (
-                    <button onClick={() => handleLikeButton(blog.id)}>
-                      <FaRegHeart className="mt-8 xs:mt-10 w-12 xs:w-14 size-8" />
-                      {isBlogLiked[blog.id]}
+                    <button onClick={() => handleLikeButton(blog?.id)}>
+                      <FaRegHeart className="lg:mt-3 xs:mt-12 w-12 xs:w-14 lg:size-6 xs:size-7 " />
                     </button>
                   )}
                 </div>
                 <div>
                   {isBookMarkSaved?.includes(blog?.id) ? (
                     <button onClick={() => handleSaveBookmarkBlog(blog)}>
-                      <IoBookmark className="mt-8 xs:mt-4 w-12 xs:w-14 size-6" />
+                      <IoBookmark className="lg:mt-3 xs:mt-5 w-12 xs:w-14 size-6 " />
                     </button>
                   ) : (
                     <button onClick={() => handleSaveBookmarkBlog(blog)}>
                       {" "}
-                      <FaRegBookmark className="mt-8 xs:mt-4 w-12 xs:w-14 size-6" />
+                      <FaRegBookmark className="lg:mt-3  xs:mt-5 w-12 xs:w-14 size-6" />
                     </button>
                   )}
                 </div>
@@ -294,7 +293,6 @@ const PostedBlog = ({ sendBlogsData }) => {
                   }
                 />
               )}
-            <hr className="mt-1 mb-1"></hr>
           </div>
         );
       })}

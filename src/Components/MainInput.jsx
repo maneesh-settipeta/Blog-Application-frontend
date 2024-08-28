@@ -16,18 +16,19 @@ function MainInput() {
   const { blogsData } = useFetchBlogs();
   const { userData } = useFetchUserData();
 
-  const [fileContent, setFileContent] = useState("");
-  // const [inputValue, setInputValue] = useState("");
-
   const filteredBlogs = blogs?.filter(
     (blog) =>
-      blog.userTitle?.toLowerCase().includes(searchQuery) ||
-      `${blog?.firstName} ${blog?.lastName}`.toLowerCase().includes(searchQuery)
+      blog.userTitle?.toLowerCase()?.includes(searchQuery) ||
+      `${blog?.firstName} ${blog?.lastName}`
+        .toLowerCase()
+        ?.includes(searchQuery)
   );
 
   const [savedBlogs, setSavedBlogs] = useState([]);
+  console.log(savedBlogs);
 
   const location = useLocation();
+  console.log(location);
 
   let displayBlogs;
   if (filteredBlogs?.length > 0) {
@@ -42,20 +43,20 @@ function MainInput() {
     inputTitle: "",
     inputValue: "",
   });
-  console.log(currentState.inputValue);
 
   const currentDate = new Date().toLocaleString();
 
   const [loading, setLoading] = useState(true);
 
+  const getBlogs = () => {
+    bulkBlog(blogsData);
+    console.log(userData?.savedBlogs);
+    setSavedBlogs(userData?.savedBlogs);
+    setLoading(false);
+  };
   useEffect(() => {
-    const getBlogs = () => {
-      bulkBlog(blogsData);
-      setSavedBlogs(userData?.savedBlogs);
-      setLoading(false);
-    };
     getBlogs();
-  }, [blogsData]);
+  }, [blogsData, userData, location]);
 
   const handleInput = (e) => {
     const inputText = e.target.value;
@@ -64,6 +65,7 @@ function MainInput() {
       inputValue: inputText,
     }));
   };
+
   const handleTitleInput = (e) => {
     const inputTextTitle = e.target.value;
     setCurrentState((prevState) => ({
@@ -71,6 +73,7 @@ function MainInput() {
       inputTitle: inputTextTitle,
     }));
   };
+
   const handleToggleInputs = () => {
     setCurrentState((prevState) => ({
       ...prevState,
@@ -95,11 +98,11 @@ function MainInput() {
     const newBlog = { ...newBlogDetails, id: docRef.id };
     await updateDoc(doc(db, "blogs", docRef.id), newBlog);
     addBlog(newBlog);
-
     currentState.inputTitle = "";
     currentState.inputValue = "";
     currentState.uniqueID = newID;
   };
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -131,7 +134,7 @@ function MainInput() {
     <div className="flex justify-center">
       <div className="xs:w-full md:w-1/2 px-4  max-h-max ">
         <button
-          className="flex underline mb-2 text-customColor font-medium text-3xl  text-start "
+          className="flex  mb-2 border p-2 border-black rounded-md text-customColor font-medium text-3xl  text-start "
           onClick={handleToggleInputs}
         >
           {currentState.toggleInput ? "Write a post" : "Post Blog"}
@@ -159,6 +162,7 @@ function MainInput() {
             <p className="font-serif text-2xl  text-gray-950 mt-6">Type Here</p>
 
             <textarea
+              draggable="false"
               type="text"
               onChange={handleInput}
               value={currentState.inputValue}
@@ -173,11 +177,10 @@ function MainInput() {
                 Submit
               </button>
             </div>
-            <hr className="mt-2 mb-4 "></hr>
           </div>
         ) : null}
         <div className="flex-col justify-center mt-10 ">
-          <h1 className=" text-4xl text-customColor  mb-6 font-bold ">
+          <h1 className=" text-4xl text-customColor underline mb-6 font-bold ">
             Conversations
           </h1>
           <PostedBlog sendBlogsData={displayBlogs} />

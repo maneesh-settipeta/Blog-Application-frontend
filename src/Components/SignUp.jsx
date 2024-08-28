@@ -41,8 +41,9 @@ function SignUp() {
     }
   }
   return (
-    <div className="bg-customColor h-screen flex items-center justify-center ">
-      <div className="bg-[#f7f7f7]/5 p-7  rounded-md border  w-1/3 ">
+    <div className="bg-customColor h-screen flex items-center justify-center  ">
+      <div className="bg-[#f7f7f7] p-7  rounded-md border xs:w-fit xs:h-fit w-1/4 sm:w-fit h-1/2 lg:w-96 ">
+        <h1 className="text-xl font-bold flex justify-center">Sign-up</h1>
         <div>
           <p className="flex flex-col py-2">
             <p className="text-1xl font-medium text-customColor"> First Name</p>
@@ -84,7 +85,7 @@ function SignUp() {
             ></input>
           </p>
         </div>
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-end items-end">
           <Link to="/Login">
             <button
               className="bg-customcolorred  p-2 text-white text-lg hover:font-medium rounded-md   hover:text-black hover:shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out"

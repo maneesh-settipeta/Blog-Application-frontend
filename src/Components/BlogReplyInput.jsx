@@ -49,17 +49,17 @@ function BlogReplyInput({ id, sendOnClick, replyOnClick, sendFirebaseId }) {
   };
 
   return (
-    <div className=" flex  md:flex-row mb-2 mt-2 w-full  justify-between">
-      <div className="ml-6 flex-grow ">
+    <div className=" flex  xs:w-full mb-2 mt-2 w-full  justify-between">
+      <div className="md:ml-1  flex-grow ">
         <textarea
           type="text"
           onChange={handleInputReply}
           value={replyInputState.data}
-          className="border border-black rounded-md  h-10 w-full  ml-4 p-1 "
+          className="border border-black rounded-md  h-10 xs:w-full   xs:ml-3 p-1 "
           placeholder="Reply here"
         />
       </div>
-      <div className="mr-5 ml-4">
+      <div className="md:mr-5 md:ml-4 xs:ml-3 xs:flex-row md:flex-col ">
         <button
           onClick={() => handleOnClickCancel(id)}
           className="p-2 ml-2  bg-gray-300 text-gray-950 rounded-md"

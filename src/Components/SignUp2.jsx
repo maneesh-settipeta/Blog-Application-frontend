@@ -18,7 +18,7 @@ function SignUp2() {
               First Name
             </label>
             <input
-              {...register("firstName", { required: "This is Required" })}
+              {...register("firstName", { required: " This is Required" })}
               placeholder="First Name"
               className="w-fullrounded-lg h-12 mb-2  p-2 "
             />

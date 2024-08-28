@@ -38,23 +38,27 @@ function DetailBlog({ id }) {
       showReplies: !currentState.showReplies,
     }));
   };
+  const handleShowRepliesCount = () => {
+    const blogFindLength = findBlog.replies.length;
+    return blogFindLength;
+  };
   return (
     <div className="flex justify-center">
-      <div className="w-1/3">
+      <div className="md:w-1/2 xs:w-full xs:mr-1 xs:p-2">
         <h1 className="p-4 font-medium text-4xl text-left text-customColors underline">
           {findBlog?.userTitle}
         </h1>
-        <p className="flex   justify-end  text-customcolorred">
+        <p className="flex  justify-end  text-customcolorred">
           {findBlog?.firstName + " " + findBlog?.lastName}
         </p>
-        <p className="flex pt-1  justify-end  text-customColor">
+        <p className="flex pt-1  justify-end   text-customColor">
           {findBlog?.dateCreated}
         </p>
         <p className="p-4 font-medium text-2xl text-left ">
           <span className=" underline">Description:</span> {findBlog?.userinput}
         </p>
         <button
-          onClick={() => handleShowReplyInputElement(findBlog?.id)}
+          onClick={() => handleShowReplyInputElement}
           className="p-2 bg-customcolorred outline-none text-gray-50 text-lg ml-4 rounded-md mt-2"
         >
           {" "}
@@ -68,12 +72,12 @@ function DetailBlog({ id }) {
             replyOnClick={handleReplyClick}
           />
         ) : null}
-        <h1
+        <button
           onClick={handleShowReplies}
           className="pl-4 pt-3 pb-1 text-lg font-medium text-customcolorred underline"
         >
-          Replies
-        </h1>
+          Replies({handleShowRepliesCount(findBlog?.id)})
+        </button>
         {findBlog?.replies &&
           currentState.showReplies &&
           findBlog?.replies.map((reply, index) => (
