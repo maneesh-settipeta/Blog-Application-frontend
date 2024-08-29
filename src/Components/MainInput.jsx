@@ -8,10 +8,17 @@ import PostedBlog from "./PostedBlog";
 import { useLocation } from "react-router-dom";
 import useFetchBlogs from "../useFetchBlogs";
 import useFetchUserData from "../useFetchUserData";
+import { useForm } from "react-hook-form";
 
 function MainInput() {
   const { bulkBlog, addBlog, blogs, user, searchQuery } =
     useContext(BlogContext);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const { blogsData } = useFetchBlogs();
   const { userData } = useFetchUserData();
@@ -58,21 +65,21 @@ function MainInput() {
     getBlogs();
   }, [blogsData, userData, location]);
 
-  const handleInput = (e) => {
-    const inputText = e.target.value;
-    setCurrentState((prevState) => ({
-      ...prevState,
-      inputValue: inputText,
-    }));
-  };
+  // const handleInput = (e) => {
+  //   const inputText = e.target.value;
+  //   setCurrentState((prevState) => ({
+  //     ...prevState,
+  //     inputValue: inputText,
+  //   }));
+  // };
 
-  const handleTitleInput = (e) => {
-    const inputTextTitle = e.target.value;
-    setCurrentState((prevState) => ({
-      ...prevState,
-      inputTitle: inputTextTitle,
-    }));
-  };
+  // const handleTitleInput = (e) => {
+  //   const inputTextTitle = e.target.value;
+  //   setCurrentState((prevState) => ({
+  //     ...prevState,
+  //     inputTitle: inputTextTitle,
+  //   }));
+  // };
 
   const handleToggleInputs = () => {
     setCurrentState((prevState) => ({
@@ -81,11 +88,14 @@ function MainInput() {
     }));
   };
 
-  const handlesendData = async () => {
+  const handlesendData = async (data) => {
+    const { title, description } = data;
+    console.log(title, description);
+
     const newID = currentState.uniqueID + 1;
     const newBlogDetails = {
-      userTitle: currentState.inputTitle,
-      userinput: currentState.inputValue,
+      userTitle: title,
+      userinput: description,
       dateCreated: currentDate,
       replies: [],
       userID: user.id,
@@ -98,8 +108,8 @@ function MainInput() {
     const newBlog = { ...newBlogDetails, id: docRef.id };
     await updateDoc(doc(db, "blogs", docRef.id), newBlog);
     addBlog(newBlog);
-    currentState.inputTitle = "";
-    currentState.inputValue = "";
+    // currentState.inputTitle = "";
+    // currentState.inputValue = "";
     currentState.uniqueID = newID;
   };
 
@@ -124,67 +134,68 @@ function MainInput() {
 
   if (searchQuery?.length !== 0 && filteredBlogs?.length === 0) {
     return (
-      <h1 className=" text-4xl text-customColor flex justify-center  mb-6 font-bold ">
-        {"No Data found"}
-      </h1>
+      <>
+        <h1 className=" text-4xl text-customColor flex justify-center  mb-6 font-bold ">
+          {"No Data found"}
+        </h1>
+      </>
     );
   }
 
   return (
     <div className="flex justify-center">
       <div className="xs:w-full md:w-1/2 px-4  max-h-max ">
-        <button
-          className="flex  mb-2 border p-2 border-black rounded-md text-customColor font-medium text-3xl  text-start "
-          onClick={handleToggleInputs}
-        >
-          {currentState.toggleInput ? "Write a post" : "Post Blog"}
-        </button>
-        {currentState.toggleInput ? (
-          <div>
-            <p className="font-serif text-2xl text-gray-950 mt-5   ">Title</p>
-            <input
-              type="text"
-              onChange={handleTitleInput}
-              value={currentState.inputTitle}
-              className="border w-full  border-black rounded-md outline-none h-10 mt-1  p-2  focus:outline-none"
-              placeholder="Enter Title"
-            />
+        <form onSubmit={handleSubmit(handlesendData)}>
+          <button
+            className="flex  mb-2 border p-2 border-black rounded-md text-customColor font-medium text-3xl  text-start "
+            onClick={handleToggleInputs}
+          >
+            {currentState.toggleInput ? "Write a post" : "Post Blog"}
+          </button>
+          {currentState.toggleInput ? (
+            <div>
+              <p className="font-serif text-2xl text-gray-950 mt-5   ">Title</p>
+              <input
+                className="border w-full  border-black rounded-md outline-none h-10 mt-1  p-2  focus:outline-none"
+                placeholder="Enter Title"
+                {...register("title", { required: "This is Required" })}
+              />
 
-            <p className="font-serif text-2xl  text-gray-950 mt-6">
-              Upload a file to be set in the description field.
-            </p>
-            <input
-              type="file"
-              accept=".txt"
-              onChange={handleFileUpload}
-              className=" pt-4"
-            />
-            <p className="font-serif text-2xl  text-gray-950 mt-6">Type Here</p>
+              <p className="font-serif text-2xl  text-gray-950 mt-6">
+                Upload a file to be set in the description field.
+              </p>
+              <input
+                type="file"
+                accept=".txt"
+                onChange={handleFileUpload}
+                className=" pt-4"
+              />
+              <p className="font-serif text-2xl  text-gray-950 mt-6">
+                Type Here
+              </p>
 
-            <textarea
-              draggable="false"
-              type="text"
-              onChange={handleInput}
-              value={currentState.inputValue}
-              className="border w-full border-black rounded-md  outline-none h-40 p-2 mt-1 "
-              placeholder="please type here"
-            />
-            <div className="flex justify-center mt-3">
-              <button
-                className="p-2 bg-customcolorred outline-none text-gray-50 rounded-md"
-                onClick={handlesendData}
-              >
-                Submit
-              </button>
+              <textarea
+                {...register("description", { required: "This is Required" })}
+                className="border w-full border-black rounded-md  outline-none h-40 p-2 mt-1 "
+                placeholder="please type here"
+              />
+              <div className="flex justify-center mt-3">
+                <input
+                  type="submit"
+                  className="p-2 bg-customcolorred outline-none text-gray-50 rounded-md"
+                >
+                  Submit
+                </input>
+              </div>
             </div>
+          ) : null}
+          <div className="flex-col justify-center mt-10 ">
+            <h1 className=" text-4xl text-customColor underline mb-6 font-bold ">
+              Conversations
+            </h1>
+            <PostedBlog sendBlogsData={displayBlogs} />
           </div>
-        ) : null}
-        <div className="flex-col justify-center mt-10 ">
-          <h1 className=" text-4xl text-customColor underline mb-6 font-bold ">
-            Conversations
-          </h1>
-          <PostedBlog sendBlogsData={displayBlogs} />
-        </div>
+        </form>
       </div>
     </div>
   );

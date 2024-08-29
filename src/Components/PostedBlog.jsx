@@ -5,7 +5,7 @@ import { IoBookmark } from "react-icons/io5";
 import { FaRegBookmark } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
 import { db } from "../firebase";
-import { doc } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import { updateDoc } from "firebase/firestore";
 import BlogContext from "../Store/StoreInput";
 import { arrayUnion } from "firebase/firestore";
@@ -13,9 +13,11 @@ import useFetchUserData from "../useFetchUserData";
 import { arrayRemove } from "firebase/firestore";
 import { FcLike } from "react-icons/fc";
 import { FaRegHeart } from "react-icons/fa";
+import { MdDeleteOutline } from "react-icons/md";
 
 const PostedBlog = ({ sendBlogsData }) => {
-  const { blogs, user, setUser } = useContext(BlogContext);
+  const { blogs, user, setUser, bulkBlog } = useContext(BlogContext);
+  console.log(user.userAccess);
 
   const { userData } = useFetchUserData();
 
@@ -162,7 +164,6 @@ const PostedBlog = ({ sendBlogsData }) => {
         const test = setBlogLike((prevState) =>
           prevState.filter((idValue) => idValue !== id)
         );
-
         await updateDoc(userDocRef, {
           blogLike: arrayRemove(id),
         });
@@ -177,6 +178,17 @@ const PostedBlog = ({ sendBlogsData }) => {
     }
   };
 
+  const handleDeleteBlog = async (id) => {
+    if (user.admin === true) {
+      const filterdDeletedBlogs = blogs.filter((blog) => blog.id !== id);
+      bulkBlog(filterdDeletedBlogs);
+      const deleteBlogDoc = doc(db, "blogs", id);
+      await deleteDoc(deleteBlogDoc);
+    } else {
+      console.error("Error Deleting");
+    }
+  };
+
   return (
     <>
       {" "}
@@ -187,37 +199,50 @@ const PostedBlog = ({ sendBlogsData }) => {
             key={blog?.blogID + blog?.firstName + blog?.dateCreated}
           >
             <hr className="mt-1 mb-1"></hr>
-            <div className="flex">
-              <p className=" p-1 text-lg mt-2  ml-3  ">
-                {blog?.firstName + " " + blog?.lastName}
-              </p>
-              {currentState.following?.includes(blog?.userID) ? (
-                <button
-                  onClick={() =>
-                    handleSendFollow(
-                      blog?.firstName,
-                      blog?.lastName,
-                      blog?.userID
-                    )
-                  }
-                  className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
-                >
-                  Following
-                </button>
-              ) : (
-                <button
-                  onClick={() =>
-                    handleSendFollow(
-                      blog?.firstName,
-                      blog?.lastName,
-                      blog?.userID
-                    )
-                  }
-                  className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
-                >
-                  Follow
-                </button>
-              )}
+            <div className="flex justify-between">
+              <div className="flex flex-row">
+                <p className=" p-1 text-lg mt-2  ml-3  ">
+                  {blog?.firstName + " " + blog?.lastName}
+                </p>
+                {currentState.following?.includes(blog?.userID) ? (
+                  <button
+                    onClick={() =>
+                      handleSendFollow(
+                        blog?.firstName,
+                        blog?.lastName,
+                        blog?.userID
+                      )
+                    }
+                    className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
+                  >
+                    Following
+                  </button>
+                ) : (
+                  <button
+                    onClick={() =>
+                      handleSendFollow(
+                        blog?.firstName,
+                        blog?.lastName,
+                        blog?.userID
+                      )
+                    }
+                    className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
+                  >
+                    Follow
+                  </button>
+                )}
+              </div>
+              <div>
+                {user.admin ? (
+                  <button>
+                    {" "}
+                    <MdDeleteOutline
+                      className="mt-5 size-6"
+                      onClick={() => handleDeleteBlog(blog.id)}
+                    />
+                  </button>
+                ) : null}{" "}
+              </div>
             </div>
             <Link to={`/blogs/${blog.id}`} state={{ blogid: blog.id }}>
               <h1 className="pl-4 font-bold text-3xl p-2 ">

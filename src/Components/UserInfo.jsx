@@ -1,5 +1,5 @@
 import BlogContext from "../Store/StoreInput";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import useFetchUserData from "../useFetchUserData";
 function UserInfo() {
   const { user } = useContext(BlogContext);
@@ -20,7 +20,7 @@ function UserInfo() {
         <h1 className="text-customcolorred font-medium underline  text-lg">
           Following :
         </h1>
-        {userData?.following.map((eachUserData, index) => (
+        {userData?.followingUserDetails.map((eachUserData, index) => (
           <div key={index}>
             <li className="text-customColor font-medium text-base">
               {" "}

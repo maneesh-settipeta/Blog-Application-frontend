@@ -44,7 +44,7 @@ function Profile() {
         <h1 className="font-medium md:text-5xl xs:text-lg mb-4">
           {user.firstName + " " + user.lastName}
         </h1>
-        <div className="flex  justify-between ">
+        <div className="flex  justify-between mb-4 ">
           <button onClick={handleShowMyBlogs}>
             {showMyBlogs ? (
               <span className=" p-2 ml-8- text-xl font-bold text-customColor">

@@ -7,6 +7,8 @@ import { FaSearch } from "react-icons/fa";
 function Header() {
   const { user, clearLocalStorage, handleSearchQuery } =
     useContext(BlogContext);
+  const [isUserLoggedIn, setUserLoggedIn] = useState(false);
+  console.log(isUserLoggedIn);
 
   const [isOpenMenu, setOpenMenu] = useState(false);
   const [searchQuery, setSearchingQuery] = useState("");
@@ -14,6 +16,17 @@ function Header() {
   const handleOpenProfileMenu = () => {
     setOpenMenu(!isOpenMenu);
   };
+
+  useEffect(() => {
+    const fetchDataFromFirebase = () => {
+      const getFirstName = localStorage.getItem("firstName");
+      const getLastName = localStorage.getItem("lastName");
+      if (getFirstName === "undefined" && getLastName === "undefined") {
+        setUserLoggedIn(true);
+      }
+    };
+    fetchDataFromFirebase();
+  }, []);
 
   const handleSendSearchQuery = (searchQuery) => {
     setSearchingQuery(searchQuery);
@@ -56,18 +69,26 @@ function Header() {
             <FaSearch className="absolute top-1/2 md:right-24 transform xs:size-4  xs:right-16 -translate-y-1/2 text-customcolorred md:size-5 md:mb-2" />
           </div>
         </div>
-        <button
-          ref={dropdown}
-          onClick={handleOpenProfileMenu}
-          className="rounded-full font-medium text-sm md:w-12 md:p-2 xs:w-10 xs:mt-0  text-white bg-customcolorred md:mr-3  "
-        >
-          {firstNameExtract.toUpperCase() + secondNameExtract.toUpperCase()}
-          <ProfileDropDown
-            clearLocalStorage={clearLocalStorage}
-            isOpen={isOpenMenu}
-            isClosedDropDown={() => handleOpenProfileMenu()}
-          />
-        </button>
+        {isUserLoggedIn ? (
+          <Link to="/Login">
+            <button className="text-base h-10 p-2 mt-1 bg-customcolorred text-white rounded">
+              Login
+            </button>
+          </Link>
+        ) : (
+          <button
+            ref={dropdown}
+            onClick={handleOpenProfileMenu}
+            className="rounded-full font-medium text-sm md:w-12 md:p-2 xs:w-10 xs:mt-0  text-white bg-customcolorred md:mr-3  "
+          >
+            {firstNameExtract.toUpperCase() + secondNameExtract.toUpperCase()}
+            <ProfileDropDown
+              clearLocalStorage={clearLocalStorage}
+              isOpen={isOpenMenu}
+              isClosedDropDown={() => handleOpenProfileMenu()}
+            />
+          </button>
+        )}
       </div>
     </div>
   );

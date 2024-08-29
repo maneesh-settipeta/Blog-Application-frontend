@@ -4,11 +4,6 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 function SignUpUpdated() {
-  //   const firstName = useRef(null);
-  //   const lastName = useRef(null);
-  //   const email = useRef(null);
-  //   const password = useRef(null);
-
   const {
     register,
     handleSubmit,
@@ -99,7 +94,6 @@ function SignUpUpdated() {
               className="w-full rounded-lg h-12 mb-2 p-2"
             />
             <p className="text-customcolorred">{errors.Email?.message}</p>
-
             <label className="text-customColor font-medium text-xl">
               Password
             </label>
