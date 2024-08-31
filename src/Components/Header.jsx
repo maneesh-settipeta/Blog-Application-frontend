@@ -8,11 +8,12 @@ function Header() {
   const { user, clearLocalStorage, handleSearchQuery } =
     useContext(BlogContext);
   const [isUserLoggedIn, setUserLoggedIn] = useState(false);
-
   const [isOpenMenu, setOpenMenu] = useState(false);
-
   const [searchQuery, setSearchingQuery] = useState("");
   const dropdown = useRef();
+
+  const debouncingRef = useRef(null);
+
   const handleOpenProfileMenu = () => {
     setOpenMenu(!isOpenMenu);
   };
@@ -29,9 +30,19 @@ function Header() {
     }
   }, []);
 
-  const handleSendSearchQuery = (searchQuery) => {
-    setSearchingQuery(searchQuery);
-    handleSearchQuery(searchQuery);
+  const handleSendSearchQuery = (e) => {
+    const value = e.target.value.toLowerCase();
+    console.log(value);
+
+    setSearchingQuery(value);
+    if (debouncingRef.current) {
+      clearTimeout(debouncingRef.current);
+      console.log("40");
+    }
+    debouncingRef.current = setTimeout(() => {
+      handleSearchQuery(value);
+      console.log("45");
+    }, 2000);
   };
 
   const firstNameExtract = user?.firstName ? user?.firstName[0] : "";
@@ -60,9 +71,7 @@ function Header() {
         <div>
           <input
             value={searchQuery}
-            onChange={(e) =>
-              handleSendSearchQuery(e.target.value.toLowerCase())
-            }
+            onChange={handleSendSearchQuery}
             className=" bg-white md:mr-4 xs:mr-2  xs:pl-1 md:mb-1 xs:mb-0  text-customColor rounded-2xl md:h-10 md:p-2 md:w-80 xs:w-44 xs:p-2 h-10 xs:h-9 text-base font-thin outline-none  focus:ring-2 focus:ring-customcolorred"
             placeholder="Search here "
           />

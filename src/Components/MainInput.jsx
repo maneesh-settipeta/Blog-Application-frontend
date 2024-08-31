@@ -13,7 +13,6 @@ import { useForm } from "react-hook-form";
 function MainInput() {
   const { bulkBlog, addBlog, blogs, user, searchQuery } =
     useContext(BlogContext);
-  console.log(user);
 
   const {
     register,
