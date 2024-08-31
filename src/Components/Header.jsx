@@ -8,24 +8,25 @@ function Header() {
   const { user, clearLocalStorage, handleSearchQuery } =
     useContext(BlogContext);
   const [isUserLoggedIn, setUserLoggedIn] = useState(false);
-  console.log(isUserLoggedIn);
 
   const [isOpenMenu, setOpenMenu] = useState(false);
+
   const [searchQuery, setSearchingQuery] = useState("");
   const dropdown = useRef();
   const handleOpenProfileMenu = () => {
     setOpenMenu(!isOpenMenu);
   };
 
+  const getFirstName = localStorage.getItem("firstName");
+  const getLastName = localStorage.getItem("lastName");
+
   useEffect(() => {
-    const fetchDataFromFirebase = () => {
-      const getFirstName = localStorage.getItem("firstName");
-      const getLastName = localStorage.getItem("lastName");
-      if (getFirstName === "undefined" && getLastName === "undefined") {
-        setUserLoggedIn(true);
-      }
-    };
-    fetchDataFromFirebase();
+    if (getFirstName === "undefined" && getLastName === "undefined") {
+      setUserLoggedIn(true);
+    }
+    if (getFirstName === null && getLastName === null) {
+      setUserLoggedIn(true);
+    }
   }, []);
 
   const handleSendSearchQuery = (searchQuery) => {

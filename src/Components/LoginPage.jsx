@@ -13,11 +13,12 @@ import useFetchUserData from "../useFetchUserData";
 function LoginPage() {
   const { setUser } = useContext(BlogContext);
   const { userData } = useFetchUserData();
-  const userId = useRef("maneeshsettipeta@gmail.com");
-  const userPassword = useRef("Maneesh@123");
+  const userId = useRef();
+  const userPassword = useRef();
   const navigate = useNavigate();
 
-  async function handleUserLogin() {
+  async function handleUserLogin(e) {
+    e.preventDefault();
     const email = userId.current.value;
     const password = userPassword.current.value;
 
@@ -25,8 +26,9 @@ function LoginPage() {
       await signInWithEmailAndPassword(auth, email, password);
 
       if (userData) {
-        setUser(userData);
-
+        console.log(userData);
+        localStorage.setItem("firstName", userData.firstName);
+        localStorage.setItem("lastName", userData.lastName);
         navigate("/blogs");
       }
     } catch (error) {

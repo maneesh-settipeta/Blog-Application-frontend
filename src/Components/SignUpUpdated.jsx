@@ -13,7 +13,6 @@ function SignUpUpdated() {
 
   async function onSubmit(data) {
     const { firstName, lastName, Email, password } = data;
-    console.log(firstName, lastName, Email, password);
 
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -21,7 +20,6 @@ function SignUpUpdated() {
         Email,
         password
       );
-      console.log(userCredential);
 
       const user = userCredential.user;
       const userData = {
@@ -39,10 +37,6 @@ function SignUpUpdated() {
       };
       await setDoc(doc(db, "users", user.uid), userData);
     } catch (error) {
-      console.log(error.message);
-      console.log(error?.errors?.message);
-
-      //   setError("root", { type: "custom", message: "custom message" });
       setError("root", {
         type: "manual",
         message: error?.message,

@@ -13,15 +13,22 @@ import { useForm } from "react-hook-form";
 function MainInput() {
   const { bulkBlog, addBlog, blogs, user, searchQuery } =
     useContext(BlogContext);
+  console.log(user);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
   const { blogsData } = useFetchBlogs();
   const { userData } = useFetchUserData();
+
+  const [currentState, setCurrentState] = useState({
+    toggleInput: false,
+    showHeading: false,
+  });
 
   const filteredBlogs = blogs?.filter(
     (blog) =>
@@ -33,12 +40,9 @@ function MainInput() {
 
   const [savedBlogs, setSavedBlogs] = useState([]);
   console.log(savedBlogs);
-
   const location = useLocation();
-  console.log(location);
-
   let displayBlogs;
-  if (filteredBlogs?.length > 0) {
+  if (searchQuery?.length > 0 && filteredBlogs?.length > 0) {
     displayBlogs = filteredBlogs;
   } else if (location.pathname === "/blogs/bookmarks") {
     displayBlogs = savedBlogs;
@@ -46,40 +50,21 @@ function MainInput() {
     displayBlogs = blogs;
   }
 
-  const [currentState, setCurrentState] = useState({
-    inputTitle: "",
-    inputValue: "",
-  });
-
   const currentDate = new Date().toLocaleString();
 
   const [loading, setLoading] = useState(true);
 
   const getBlogs = () => {
+    console.log(userData);
     bulkBlog(blogsData);
-    console.log(userData?.savedBlogs);
     setSavedBlogs(userData?.savedBlogs);
+    console.log(userData?.savedBlogs);
+
     setLoading(false);
   };
   useEffect(() => {
     getBlogs();
-  }, [blogsData, userData, location]);
-
-  // const handleInput = (e) => {
-  //   const inputText = e.target.value;
-  //   setCurrentState((prevState) => ({
-  //     ...prevState,
-  //     inputValue: inputText,
-  //   }));
-  // };
-
-  // const handleTitleInput = (e) => {
-  //   const inputTextTitle = e.target.value;
-  //   setCurrentState((prevState) => ({
-  //     ...prevState,
-  //     inputTitle: inputTextTitle,
-  //   }));
-  // };
+  }, [blogsData, userData]);
 
   const handleToggleInputs = () => {
     setCurrentState((prevState) => ({
@@ -90,7 +75,6 @@ function MainInput() {
 
   const handlesendData = async (data) => {
     const { title, description } = data;
-    console.log(title, description);
 
     const newID = currentState.uniqueID + 1;
     const newBlogDetails = {
@@ -107,10 +91,10 @@ function MainInput() {
     const docRef = await addDoc(collection(db, "blogs"), newBlogDetails);
     const newBlog = { ...newBlogDetails, id: docRef.id };
     await updateDoc(doc(db, "blogs", docRef.id), newBlog);
+
     addBlog(newBlog);
-    // currentState.inputTitle = "";
-    // currentState.inputValue = "";
     currentState.uniqueID = newID;
+    reset();
   };
 
   const handleFileUpload = (event) => {
@@ -142,11 +126,15 @@ function MainInput() {
     );
   }
 
+  const headingText =
+    displayBlogs === savedBlogs ? "Bookmarks" : "Conversations";
+
   return (
     <div className="flex justify-center">
       <div className="xs:w-full md:w-1/2 px-4  max-h-max ">
         <form onSubmit={handleSubmit(handlesendData)}>
           <button
+            type="button"
             className="flex  mb-2 border p-2 border-black rounded-md text-customColor font-medium text-3xl  text-start "
             onClick={handleToggleInputs}
           >
@@ -158,8 +146,10 @@ function MainInput() {
               <input
                 className="border w-full  border-black rounded-md outline-none h-10 mt-1  p-2  focus:outline-none"
                 placeholder="Enter Title"
+                name="title"
                 {...register("title", { required: "This is Required" })}
               />
+              <p className="text-customcolorred">{errors.title?.message}</p>
 
               <p className="font-serif text-2xl  text-gray-950 mt-6">
                 Upload a file to be set in the description field.
@@ -179,23 +169,22 @@ function MainInput() {
                 className="border w-full border-black rounded-md  outline-none h-40 p-2 mt-1 "
                 placeholder="please type here"
               />
+              <p className="text-customcolorred">{errors.title?.message}</p>
               <div className="flex justify-center mt-3">
                 <input
                   type="submit"
                   className="p-2 bg-customcolorred outline-none text-gray-50 rounded-md"
-                >
-                  Submit
-                </input>
+                />
               </div>
             </div>
           ) : null}
-          <div className="flex-col justify-center mt-10 ">
-            <h1 className=" text-4xl text-customColor underline mb-6 font-bold ">
-              Conversations
-            </h1>
-            <PostedBlog sendBlogsData={displayBlogs} />
-          </div>
         </form>
+        <div className="flex-col justify-center mt-10 ">
+          <h1 className=" text-4xl text-customColor underline mb-6 font-bold ">
+            {headingText}
+          </h1>
+          <PostedBlog sendBlogsData={displayBlogs} />
+        </div>
       </div>
     </div>
   );

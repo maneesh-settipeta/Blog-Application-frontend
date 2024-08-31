@@ -17,7 +17,6 @@ import { MdDeleteOutline } from "react-icons/md";
 
 const PostedBlog = ({ sendBlogsData }) => {
   const { blogs, user, setUser, bulkBlog } = useContext(BlogContext);
-  console.log(user.userAccess);
 
   const { userData } = useFetchUserData();
 
@@ -31,7 +30,6 @@ const PostedBlog = ({ sendBlogsData }) => {
     following: [],
     followingUserDetails: [],
   });
-  console.log(currentState.following);
 
   const [isBookMarkSaved, setBookMark] = useState([]);
 
@@ -42,7 +40,7 @@ const PostedBlog = ({ sendBlogsData }) => {
       setUser(userData);
       setBlogLike(userData?.blogLike);
       setBookMark(userData?.bookmarks);
-      console.log(userData?.following);
+
       setCurrentState((prevState) => ({
         ...prevState,
         following: userData?.following,
@@ -101,7 +99,7 @@ const PostedBlog = ({ sendBlogsData }) => {
       const unFollow = currentState.following.filter(
         (followingId) => followingId !== id
       );
-      console.log(unFollow);
+
       setCurrentState((prevState) => ({
         ...prevState,
         following: unFollow,
@@ -129,52 +127,64 @@ const PostedBlog = ({ sendBlogsData }) => {
 
   function handleShowRepliesLength(blogID) {
     const findBlogForReplyLength = blogs.find((blog) => blog.id === blogID);
-    const lengthOfReplies = findBlogForReplyLength.replies.length;
+    const lengthOfReplies = findBlogForReplyLength?.replies.length;
     return lengthOfReplies;
   }
 
   const handleSaveBookmarkBlog = async (blog) => {
-    try {
-      const isAlreadySaved = isBookMarkSaved?.includes(blog.id);
-      const userDocRef = doc(db, "users", user.id);
-      if (isAlreadySaved) {
-        setBookMark((prevState) => prevState.filter((id) => id !== blog.id));
+    if (user.firstName === undefined && user.lastName === undefined) {
+      alert("Please Login to save the blog");
+    } else {
+      try {
+        const isAlreadySaved = isBookMarkSaved?.includes(blog.id);
+        const userDocRef = doc(db, "users", user.id);
+        if (isAlreadySaved) {
+          const filteredSavedBookMarks = setBookMark((prevState) =>
+            prevState.filter((id) => id !== blog.id)
+          );
+          console.log(filteredSavedBookMarks);
 
-        await updateDoc(userDocRef, {
-          savedBlogs: arrayRemove(blog),
-          bookmarks: arrayRemove(blog.id),
-        });
-      } else {
-        setBookMark((prevState) => [...prevState, blog.id]);
-        await updateDoc(userDocRef, {
-          savedBlogs: arrayUnion(blog),
-          bookmarks: arrayUnion(blog.id),
-        });
+          await updateDoc(userDocRef, {
+            savedBlogs: arrayRemove(blog),
+            bookmarks: arrayRemove(blog.id),
+          });
+        } else {
+          setBookMark((prevState) => [...prevState, blog.id]);
+
+          await updateDoc(userDocRef, {
+            savedBlogs: arrayUnion(blog),
+            bookmarks: arrayUnion(blog.id),
+          });
+        }
+      } catch (error) {
+        console.error("Error Uploading");
       }
-    } catch (error) {
-      console.error("Error Uploading");
     }
   };
 
   const handleLikeButton = async (id) => {
-    try {
-      const isAlreadyBlogLiked = isBlogLiked?.includes(id);
-      const userDocRef = doc(db, "users", user.id);
-      if (isAlreadyBlogLiked) {
-        const test = setBlogLike((prevState) =>
-          prevState.filter((idValue) => idValue !== id)
-        );
-        await updateDoc(userDocRef, {
-          blogLike: arrayRemove(id),
-        });
-      } else {
-        setBlogLike((prevState) => [...prevState, id]);
-        await updateDoc(userDocRef, {
-          blogLike: arrayUnion(id),
-        });
+    if (user.firstName === undefined && user.lastName === undefined) {
+      alert("Please Login to like the blog");
+    } else {
+      try {
+        const isAlreadyBlogLiked = isBlogLiked?.includes(id);
+        const userDocRef = doc(db, "users", user.id);
+        if (isAlreadyBlogLiked) {
+          const test = setBlogLike((prevState) =>
+            prevState.filter((idValue) => idValue !== id)
+          );
+          await updateDoc(userDocRef, {
+            blogLike: arrayRemove(id),
+          });
+        } else {
+          setBlogLike((prevState) => [...prevState, id]);
+          await updateDoc(userDocRef, {
+            blogLike: arrayUnion(id),
+          });
+        }
+      } catch (error) {
+        console.error("Error Uploading");
       }
-    } catch (error) {
-      console.error("Error Uploading");
     }
   };
 

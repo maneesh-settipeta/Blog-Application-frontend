@@ -26,6 +26,8 @@ const BlogContext = createContext({
 
 function projectBlogUseReducer(state, action) {
   if (action.type === "ADD-BLOG") {
+    console.log("Blog-add");
+
     return {
       ...state,
       blogs: [...state.blogs, action.blogDetails],
@@ -40,8 +42,17 @@ function projectBlogUseReducer(state, action) {
   }
 
   if (action.type === "SET-USER") {
-    localStorage.setItem("firstName", action.userData.firstName);
-    localStorage.setItem("lastName", action.userData.lastName);
+    console.log(action.userData);
+
+    console.log(action.userData.firstName, action.userData.lastName);
+
+    if (
+      action.userData.firstName !== undefined &&
+      action.userData.lastName !== undefined
+    ) {
+      // localStorage.setItem("firstName", action.userData.firstName);
+      // localStorage.setItem("lastName", action.userData.lastName);
+    }
 
     return {
       ...state,
@@ -52,6 +63,9 @@ function projectBlogUseReducer(state, action) {
   }
 
   if (action.type === "ADD-REPLIES") {
+    // log;
+    console.log("65");
+
     const blogIndex = state.blogs.findIndex(
       (blog) => blog.id === action.repliesData.id
     );
@@ -93,7 +107,7 @@ export function ProjectContext({ children }) {
       searchQuery: "",
     }
   );
-  projectStateReducer.user.email;
+  // projectStateReducer.user.email;
 
   function bulkBlog(blogData) {
     setProjectDispatch({
