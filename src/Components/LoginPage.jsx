@@ -50,7 +50,6 @@ function LoginPage() {
               className="max-h-full p-3 border outline-none rounded-md"
               ref={userId}
               placeholder="Please Enter your ID"
-              defaultValue="maneeshsettipeta@gmail.com"
             ></input>
           </p>
         </div>
@@ -60,7 +59,6 @@ function LoginPage() {
               Password
             </label>
             <input
-              defaultValue="Maneesh@123"
               type="password"
               className="max-h-full p-3 border outline-none rounded-md"
               ref={userPassword}

@@ -42,7 +42,7 @@ function Header() {
     debouncingRef.current = setTimeout(() => {
       handleSearchQuery(value);
       console.log("45");
-    }, 2000);
+    }, 300);
   };
 
   const firstNameExtract = user?.firstName ? user?.firstName[0] : "";
