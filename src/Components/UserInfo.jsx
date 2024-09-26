@@ -1,12 +1,28 @@
+import axios from "axios";
 import BlogContext from "../Store/StoreInput";
-import { useContext } from "react";
-import useFetchUserData from "../useFetchUserData";
+import { useContext, useEffect, useState } from "react";
+
+
 function UserInfo() {
   const { user } = useContext(BlogContext);
-  const { userData } = useFetchUserData();
+console.log(user.userUuid);
 
-  const firstNameFirstCharExtract = userData?.firstName[0];
-  const firstNameLastCharExtract = userData?.lastName[0];
+const [followingUserDetails, setfollowingUserDetails]= useState([])
+
+  useEffect(()=>{
+ const getFollowingData = async ()=>{
+  const response = await  axios.post("http://localhost:3000/getFollowingUsersData", {loggedinuseruuid:user.userUuid})
+  console.log(response.data.blogs);
+  const followingDetails = response.data.blogs
+  followingDetails.forEach((eachFollowing)=> {
+    setfollowingUserDetails([...followingUserDetails, eachFollowing])
+  } )
+ }
+ getFollowingData();
+  },[])
+
+  const firstNameFirstCharExtract = user?.firstName[0];
+  const firstNameLastCharExtract = user?.lastName[0];
   return (
     <div className=" flex-col justify-center h-screen  xs:pt-4 pl-10 md:pr-40 md:pl-40 lg:pt-32">
       <div>
@@ -20,11 +36,11 @@ function UserInfo() {
         <h1 className="text-customcolorred font-medium underline  text-lg">
           Following :
         </h1>
-        {userData?.followingUserDetails.map((eachUserData, index) => (
+        {followingUserDetails.map((eachUserData, index) => (
           <div key={index}>
             <li className="text-customColor font-medium text-base">
               {" "}
-              {eachUserData.firstName + " " + eachUserData.lastName}
+              {eachUserData.firstname + " " + eachUserData.lastname}
             </li>
           </div>
         ))}

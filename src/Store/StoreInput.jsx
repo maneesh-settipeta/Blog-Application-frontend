@@ -4,30 +4,33 @@ import { createContext, useReducer } from "react";
 
 const BlogContext = createContext({
   blogs: [],
+  repliesData: [],
+  savedBlogsData: [],
+  savedBlogUuids:[],
   replyClick: false,
   selectedBlog: undefined,
   replyCheckForTrue: false,
   user: {
-    firstName: localStorage.getItem("firstName"),
-    lastName: localStorage.getItem("lastName"),
-    id: null,
+    firstName: null,
+    lastName: null,
+    userUuid: null,
     email: null,
   },
   searchQuery: "",
-  addBlog: () => {},
-  editReply: () => {},
-  addReplies: () => {},
-  checkUser: () => {},
-  setUser: () => {},
-  bulkBlog: () => {},
-  clearLocalStorage: () => {},
-  handleSearchQuery: () => {},
+  addBlogUuids:()=>{},
+  addBlog: () => { },
+  editReply: () => { },
+  addReplies: () => { },
+  checkUser: () => { },
+  setUser: () => { },
+  bulkBlog: () => { },
+  clearLocalStorage: () => { },
+  handleSearchQuery: () => { },
+  savedBlogs: () => { },
 });
 
 function projectBlogUseReducer(state, action) {
   if (action.type === "ADD-BLOG") {
-    console.log("Blog-add");
-
     return {
       ...state,
       blogs: [...state.blogs, action.blogDetails],
@@ -40,49 +43,80 @@ function projectBlogUseReducer(state, action) {
       blogs: action.blogDetails,
     };
   }
-
   if (action.type === "SET-USER") {
-    console.log(action.userData);
-
-    console.log(action.userData.firstName, action.userData.lastName);
-
-    if (
-      action.userData.firstName !== undefined &&
-      action.userData.lastName !== undefined
-    ) {
-      // localStorage.setItem("firstName", action.userData.firstName);
-      // localStorage.setItem("lastName", action.userData.lastName);
-    }
-
+    localStorage.setItem("firstName", action.userData.firstname);
+    localStorage.setItem("lastName", action.userData.lastname);
+    localStorage.setItem("email", action.userData.email);
+    localStorage.setItem("useruuid", action.userData.useruuid);
     return {
       ...state,
       user: {
-        ...action.userData,
+        email: action.userData.email,
+        firstName: action.userData.firstname,
+        lastName: action.userData.lastname,
+        userUuid: action.userData.useruuid,
       },
     };
   }
-
-  if (action.type === "ADD-REPLIES") {
-    // log;
-    console.log("65");
-
-    const blogIndex = state.blogs.findIndex(
-      (blog) => blog.id === action.repliesData.id
-    );
-
-    const updatedBlog = {
-      ...state.blogs[blogIndex],
-      replies: [...state.blogs[blogIndex].replies, action.repliesData],
-    };
-
-    const updatedBlogs = [...state.blogs];
-    updatedBlogs[blogIndex] = updatedBlog;
-
+  if (action.type === 'add-saved-blogs') {
     return {
       ...state,
-      blogs: updatedBlogs,
-    };
+      savedBlogsData: [...action.blogsSaved]
+    }
   }
+  if (action.type === 'ADD-BLOGUUIDS') {
+    return {
+      ...state,
+      savedBlogUuids: [...action.bloguuids]
+    }
+  }
+
+  if (action.type === "ADD-REPLIES") {
+    const findRepliesData = state.repliesData.findIndex((replyObject) => replyObject.bloguuid === action.repliesAllData.bloguuid)
+    if (findRepliesData > -1) {
+      const replyDataUpdateObject = {
+        repliedinput: action.repliesAllData.repliedinput,
+        fullname: action.repliesAllData.fullname,
+        created_at: action.repliesAllData.created_at,
+        replyuuid: action.repliesAllData.replyuuid,
+      }
+      const updateObject = [
+        ...state.repliesData[findRepliesData].replies,
+        replyDataUpdateObject
+      ]
+      const updateReplyObject = {
+        ...state.repliesData[findRepliesData],
+        replies: updateObject,
+      }
+      const updateAllObjects = [...state.repliesData]
+      updateAllObjects[findRepliesData] = updateReplyObject
+
+      return {
+        ...state,
+        repliesData: updateAllObjects
+      }
+    }
+    else {
+      const replyData = {
+        bloguuid: action.repliesAllData.bloguuid,
+        replies: [
+          {
+            repliedinput: action.repliesAllData.repliedinput,
+            fullname: action.repliesAllData.fullname,
+            created_at: action.repliesAllData.created_at,
+            replyuuid: action.repliesAllData.replyuuid,
+          }
+        ]
+      }
+
+
+      return {
+        ...state,
+        repliesData: [...state.repliesData, replyData],
+      };
+    }
+  }
+
   if (action.type === "SEARCH-QUERY") {
     return {
       ...state,
@@ -99,16 +133,19 @@ export function ProjectContext({ children }) {
     {
       blogs: [],
       user: {
+        email: localStorage.getItem("email"),
         firstName: localStorage.getItem("firstName"),
         lastName: localStorage.getItem("lastName"),
-        id: null,
-        email: null,
+        userUuid: localStorage.getItem("useruuid"),
       },
       searchQuery: "",
+      repliesData: [],
+      savedBlogsData: [],
+      savedBlogUuids:[],
     }
   );
-  // projectStateReducer.user.email;
-
+  console.log(projectStateReducer.savedBlogUuids);
+  
   function bulkBlog(blogData) {
     setProjectDispatch({
       type: "BULK-BLOG",
@@ -122,11 +159,11 @@ export function ProjectContext({ children }) {
     });
   }
 
-  const setUser = (userFromFirebase) => {
+  const setUser = (userData) => {
     setProjectDispatch({
       type: "SET-USER",
       userData: {
-        ...userFromFirebase,
+        ...userData,
       },
     });
   };
@@ -134,7 +171,7 @@ export function ProjectContext({ children }) {
   const addReplies = (repliesData) => {
     setProjectDispatch({
       type: "ADD-REPLIES",
-      repliesData: { ...repliesData },
+      repliesAllData: { ...repliesData },
     });
   };
 
@@ -148,17 +185,38 @@ export function ProjectContext({ children }) {
     });
   };
 
+  const savedBlogs = (savedBlogsDataFromBE) => {
+
+    setProjectDispatch({
+      type: 'add-saved-blogs',
+      blogsSaved: savedBlogsDataFromBE
+    })
+  }
+
+  const addBlogUuids =(bloguuidData)=>{
+    console.log(bloguuidData,"Coming into 197");
+    setProjectDispatch({
+      type:"ADD-BLOGUUIDS",
+      bloguuids:bloguuidData,
+    })
+  }
+
   const blogsData = {
     blogs: projectStateReducer.blogs,
     replyCheckForTrue: projectStateReducer.replyCheckForTrue,
     user: projectStateReducer.user,
     searchQuery: projectStateReducer.searchQuery,
+    repliesData: projectStateReducer.repliesData,
+    savedBlogsData: projectStateReducer.savedBlogsData,
+    savedBlogUuids:projectStateReducer.savedBlogUuids,
     addBlog,
     addReplies,
     setUser,
     bulkBlog,
     clearLocalStorage,
     handleSearchQuery,
+    savedBlogs,
+    addBlogUuids,
   };
 
   return (

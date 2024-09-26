@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
-import { auth } from "../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
-import { db } from "../firebase";
+import { v4 as uuidv4 } from "uuid"; 
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 function SignUpUpdated() {
   const {
     register,
@@ -11,48 +11,70 @@ function SignUpUpdated() {
     setError,
   } = useForm();
 
+  const navigate = useNavigate();
+
   async function onSubmit(data) {
     const { firstName, lastName, Email, password } = data;
+    const uuid = uuidv4();
 
+    // try {
+    //   const userCredential = await createUserWithEmailAndPassword(
+    //     auth,
+    //     Email,
+    //     password
+    //   );
+
+    //   const user = userCredential.user;
+    //   const userData = {
+    //     firstName: firstName,
+    //     lastName: lastName,
+    //     email: Email,
+    //     password: password,
+    //     id: user.uid,
+    //     following: [],
+    //     blogLike: [],
+    //     bookmarks: [],
+    //     likedBlog: [],
+    //     savedBlogs: [],
+    //     followingUserDetails: [],
+    //   };
+      
+    //   await setDoc(doc(db, "users", user.uid), userData);
+    // } catch (error) {
+    //   setError("root", {
+    //     type: "manual",
+    //     message: error?.message,
+    //   });
+    //   console.error("Error signing up: ", error);
+    // }
+    const userDataToPostGresSql = {
+      firstName: firstName,
+      lastName: lastName,
+      email: Email,
+      password: password,
+      userUuid:uuid,
+    }
+
+    
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        Email,
-        password
-      );
-
-      const user = userCredential.user;
-      const userData = {
-        firstName: firstName,
-        lastName: lastName,
-        email: Email,
-        password: password,
-        id: user.uid,
-        following: [],
-        blogLike: [],
-        bookmarks: [],
-        likedBlog: [],
-        savedBlogs: [],
-        followingUserDetails: [],
-      };
-      await setDoc(doc(db, "users", user.uid), userData);
+      const response = await axios.post('http://localhost:3000/SignUp', userDataToPostGresSql);
+      navigate('/Login')
     } catch (error) {
-      setError("root", {
-        type: "manual",
-        message: error?.message,
-      });
-      console.error("Error signing up: ", error);
+      console.error(error,"User Creation Error");
     }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="bg-customColor h-screen w-screen">
-        <h1 className="text-3xl text-white font-sans flex justify-center pt-5 pb-10">
+       
+        <div className="flex justify-center ">
+          
+          <div className="flex flex-col  md:w-1/3 xs:w-fit bg-gray-100 p-4 rounded-md mt-12">
+          <h1 className="text-3xl text-customColor font-medium flex justify-center">
           Sign-up
         </h1>
-        <div className="flex justify-center mt-10">
-          <div className="flex flex-col  md:w-1/3 xs:w-fit bg-gray-100 p-4 rounded-md">
+          
             <label className="text-customColor font-medium text-xl">
               First Name
             </label>
@@ -101,6 +123,7 @@ function SignUpUpdated() {
                     "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character",
                 },
               })}
+              type="password"
               placeholder="Password"
               className="w-full bg-white rounded-lg h-12 mb-2 p-2"
             />
@@ -108,10 +131,19 @@ function SignUpUpdated() {
             {errors.root && (
               <p className="text-red-500  text-sm">{errors.root.message}</p>
             )}
+            <div className="flex justify-end">
             <input
               type="submit"
-              className="text-white mt-5 border bg-customColor p-3 font-bold rounded"
+             className="bg-customcolorred p-2 text-white/80 text-lg mt-5 hover:font-medium outline-none rounded-md hover:text-black hover:shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out"
             />
+            </div>
+            <div className="flex justify-center mt-5">
+          <Link to="/Login">
+            <button className="text-base mt-2 font-medium text-customColor  underline">
+              Already have an Account? Sign-In Here
+            </button>
+          </Link>
+        </div>
           </div>
         </div>
       </div>

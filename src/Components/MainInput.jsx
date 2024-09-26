@@ -1,18 +1,27 @@
 import { useContext, useState, useEffect } from "react";
 import BlogContext from "../Store/StoreInput";
-import { db } from "../firebase";
-import { addDoc, collection } from "firebase/firestore";
-import { updateDoc, doc } from "firebase/firestore";
 import Shimmer from "./Shimmer";
 import PostedBlog from "./PostedBlog";
 import { useLocation } from "react-router-dom";
-import useFetchBlogs from "../useFetchBlogs";
-import useFetchUserData from "../useFetchUserData";
+import fetchBlogs from "../fetchBlogs";
+
 import { useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
 function MainInput() {
-  const { bulkBlog, addBlog, blogs, user, searchQuery } =
-    useContext(BlogContext);
+  const { bulkBlog, addBlog, blogs, user, searchQuery, savedBlogsData, savedBlogs} = useContext(BlogContext);
+
+
+  const location = useLocation();
+  useEffect(() => {
+    const getBlogs = async () => {
+      const blogsData = await fetchBlogs();
+      bulkBlog(blogsData);
+      setLoading(false);
+    }
+    getBlogs();
+  }, []);
 
   const {
     register,
@@ -21,8 +30,18 @@ function MainInput() {
     reset,
   } = useForm();
 
-  const { blogsData } = useFetchBlogs();
-  const { userData } = useFetchUserData();
+  useEffect(()=>{
+    const handleFetchSavedBlogs = async()=>{
+      if (location.pathname === "/blogs/bookmarks"){
+        const getSavedBlogsData = await axios.post("http://localhost:3000/getBookMarksBlogs", { useruuid: user.userUuid });
+
+        const BlogsDataFromBE = getSavedBlogsData.data.data
+        savedBlogs(BlogsDataFromBE);
+      }
+    }
+    handleFetchSavedBlogs();
+  },[location.pathname])
+ 
 
   const [currentState, setCurrentState] = useState({
     toggleInput: false,
@@ -31,40 +50,19 @@ function MainInput() {
 
   const filteredBlogs = blogs?.filter(
     (blog) =>
-      blog.userTitle?.toLowerCase()?.includes(searchQuery) ||
-      `${blog?.firstName} ${blog?.lastName}`
-        .toLowerCase()
-        ?.includes(searchQuery)
+      blog.usertitle?.toLowerCase()?.includes(searchQuery) 
   );
 
-  const [savedBlogs, setSavedBlogs] = useState([]);
-  console.log(savedBlogs);
-  const location = useLocation();
   let displayBlogs;
   if (searchQuery?.length > 0 && filteredBlogs?.length > 0) {
     displayBlogs = filteredBlogs;
   } else if (location.pathname === "/blogs/bookmarks") {
-    displayBlogs = savedBlogs;
+    displayBlogs = savedBlogsData;
   } else {
     displayBlogs = blogs;
   }
 
-  const currentDate = new Date().toLocaleString();
-
   const [loading, setLoading] = useState(true);
-
-  const getBlogs = () => {
-    console.log(userData);
-    bulkBlog(blogsData);
-    setSavedBlogs(userData?.savedBlogs);
-    console.log(userData?.savedBlogs);
-
-    setLoading(false);
-  };
-  useEffect(() => {
-    getBlogs();
-  }, [blogsData, userData]);
-
   const handleToggleInputs = () => {
     setCurrentState((prevState) => ({
       ...prevState,
@@ -74,26 +72,23 @@ function MainInput() {
 
   const handlesendData = async (data) => {
     const { title, description } = data;
-
-    const newID = currentState.uniqueID + 1;
-    const newBlogDetails = {
-      userTitle: title,
+    const newBlogData = {
+      usertitle: title,
       userinput: description,
-      dateCreated: currentDate,
-      replies: [],
-      userID: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      emial: user.email,
+      useruuid: user.userUuid,
     };
-
-    const docRef = await addDoc(collection(db, "blogs"), newBlogDetails);
-    const newBlog = { ...newBlogDetails, id: docRef.id };
-    await updateDoc(doc(db, "blogs", docRef.id), newBlog);
-
-    addBlog(newBlog);
-    currentState.uniqueID = newID;
-    reset();
+    try {
+      const response = await axios.post("http://localhost:3000/Postblog", newBlogData);
+      const newBlogObject = {
+        ...newBlogData,
+        bloguuid: response?.data?.blogid,
+        created_at: response?.data?.created_time,
+      };
+      addBlog(newBlogObject);
+      reset();
+    } catch (error) {
+      console.error(error, "error while saving blogs data");
+    }
   };
 
   const handleFileUpload = (event) => {

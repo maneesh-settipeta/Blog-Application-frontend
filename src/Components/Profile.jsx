@@ -3,23 +3,15 @@ import BlogContext from "../Store/StoreInput";
 import UserInfo from "./UserInfo";
 import MyBlogs from "./MyBlogs";
 import MySavedBlogs from "./MySavedBlogs";
-import useFetchBlogs from "../useFetchBlogs";
-import useFetchUserData from "../useFetchUserData";
+import axios from "axios";
+
 
 function Profile() {
-  const { user, setUser, addBlog } = useContext(BlogContext);
+ const {user}= useContext(BlogContext)
 
-  const { blogsData } = useFetchBlogs();
-  const { userData } = useFetchUserData();
-
-  const fetchUserAndBlogsData = () => {
-    setUser(userData);
-    addBlog(blogsData);
-  };
-
-  useEffect(() => {
-    fetchUserAndBlogsData();
-  }, [blogsData, userData]);
+  useEffect(()=>{
+    const userData = axios.post('http://localhost:3000/getUserDetails',{useruuid:user.userUuid});
+  },[]);
 
   const [showMyBlogs, setShowMyBlogs] = useState(true);
   const [showSavedBlogs, setShowSavedBlogs] = useState(false);
@@ -28,7 +20,6 @@ function Profile() {
     setShowMyBlogs(true);
     setShowSavedBlogs(false);
   };
-
   const handleShowSavedBlogs = () => {
     setShowMyBlogs(false);
     setShowSavedBlogs(true);

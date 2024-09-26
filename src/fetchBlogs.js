@@ -1,18 +1,16 @@
-// import { query } from "firebase/firestore";
-// import { collection } from "firebase/firestore";
-// import { db } from "./firebase";
-// import { getDocs } from "firebase/firestore";
+import axios from "axios";
+ const fetchBlogs = async()=> {
+    try {
+        const response = await axios.get('http://localhost:3000/blogs');
+       
+        if (response.status === 200) {
 
-// async function fetchBlogs() {
-//   const q = query(collection(db, "blogs"));
-//   const querySnapshot = await getDocs(q);
-//   const blogsData = querySnapshot.docs.map((doc) => ({
-//     data: doc.data(),
-//   }));
-//   const result = blogsData.map((blogData) => {
-//     return blogData.data;
-//   });
-
-//   return result;
-// }
-// export default fetchBlogs;
+             return response.data.blogs;
+        }
+    } catch (error) {
+        console.error("Error While fetching from db", error);
+        return [];
+    } 
+    
+}
+export default fetchBlogs;

@@ -2,11 +2,20 @@ import { useContext } from "react";
 import BlogContext from "../Store/StoreInput";
 
 function MySavedBlogs() {
-  const { user } = useContext(BlogContext);
+  const { user , blogs , savedBlogsData, savedBlogUuids} = useContext(BlogContext);
+
+  console.log(blogs);
+  console.log(savedBlogUuids);
+  
+  const filterBlogsFromUuids = blogs.filter((eachBlog)=>
+    savedBlogUuids.includes(eachBlog.bloguuid)
+  );
+  console.log(filterBlogsFromUuids);
+  
 
   return (
     <>
-      {user?.savedBlogs?.map((eachMySavedBlog, index) => {
+      {filterBlogsFromUuids.map((eachMySavedBlog, index) => {
         return (
           <div
             key={index}
@@ -16,7 +25,7 @@ function MySavedBlogs() {
               <span className="font-medium text-lg text-customcolorred">
                 User Title:{" "}
               </span>
-              {eachMySavedBlog?.userTitle}
+              {eachMySavedBlog?.usertitle}
             </h1>
             <p>
               {" "}

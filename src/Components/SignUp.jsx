@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { auth, db } from "../firebase.js";
 import { setDoc, doc, updateDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { v4 as uuidv4 } from "uuid"; 
+import axios from "axios";
+
+
 function SignUp() {
   const firstName = useRef(null);
   const secondName = useRef(null);
@@ -15,30 +19,51 @@ function SignUp() {
     const email = userEmail.current.value;
     const password = userPassword.current.value;
 
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      const userData = {
+    // try {
+    //   const userCredential = await createUserWithEmailAndPassword(
+    //     auth,
+    //     email,
+    //     password
+    //   );
+    //   const user = userCredential.user;
+    //   const uuid = uuidv4(); 
+    //   const userData = {
+    //     firstName: firstname,
+    //     lastName: lastname,
+    //     email: email,
+    //     password: password,
+    //     id: user.uid,
+    //     userUuid:uuid,
+    //     following: [],
+    //     blogLike: [],
+    //     bookmarks: [],
+    //     likedBlog: [],
+    //     savedBlogs: [],
+    //     followingUserDetails: [],
+    //   };
+    //   const userDataWithId = await setDoc(doc(db, "users", user.uid), userData);
+      const userDataToPostGresSql = {
         firstName: firstname,
         lastName: lastname,
         email: email,
         password: password,
-        id: user.uid,
-        following: [],
-        blogLike: [],
-        bookmarks: [],
-        likedBlog: [],
-        savedBlogs: [],
-        followingUserDetails: [],
-      };
-      const userDataWithId = await setDoc(doc(db, "users", user.uid), userData);
-    } catch (error) {
-      console.error("Error signing up: ", error);
-    }
+        userUuid:uuid,
+      }
+      try {
+        const response = await axios.post('http://localhost:3000/SignUp', userDataToPostGresSql);
+        if (response===true){
+          alert("User created succesfully");
+          
+        }
+        if (response===false){
+          alert("user creation error")
+        }
+      } catch (error) {
+        console.error(error,"User Creation Error");
+      }
+    // } catch (error) {
+    //   console.error("Error signing up: ", error);
+    // }
   }
   return (
     <div className="bg-customColor h-screen flex items-center justify-center  ">

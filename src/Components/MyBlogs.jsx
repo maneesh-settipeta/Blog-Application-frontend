@@ -1,23 +1,25 @@
 import BlogContext from "../Store/StoreInput";
 import { useContext, useEffect, useState } from "react";
-// import fetchBlogs from "../fetchBlogs";
-import useFetchBlogs from "../useFetchBlogs";
+
 
 function MyBlogs() {
-  const { user } = useContext(BlogContext);
-  const { blogsData } = useFetchBlogs();
+  const { user , blogs } = useContext(BlogContext);
 
-  const [MyblogsData, setBlogsData] = useState([]);
+  console.log(blogs);
+  
+  // const [MyblogsData, setBlogsData] = useState([]);
 
-  function fetchBlogsData() {
-    setBlogsData(blogsData);
-  }
+  // function fetchBlogsData() {
+  //   setBlogsData();
+  // }
 
-  useEffect(() => {
-    fetchBlogsData();
-  }, [blogsData]);
+  // useEffect(() => {
+  //   fetchBlogsData();
+  // }, []);
 
-  const findMyBlogs = MyblogsData.filter((blog) => blog.userID === user.id);
+  const findMyBlogs = blogs.filter((blog) => blog.useruuid === user.userUuid);
+  console.log(findMyBlogs);
+  
 
   return (
     <>
@@ -33,7 +35,7 @@ function MyBlogs() {
                   <span className="font-medium text-lg text-customcolorred">
                     User Title:{" "}
                   </span>
-                  {blog?.userTitle}
+                  {blog?.usertitle}
                 </h1>
                 <p>
                   {" "}

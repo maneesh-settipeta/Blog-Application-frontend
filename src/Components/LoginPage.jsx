@@ -1,18 +1,14 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth } from "../firebase";
-// import { doc, getDoc } from "firebase/firestore";
-// import { db } from "../firebase";
-// import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import BlogContext from "../Store/StoreInput";
 import { useContext } from "react";
-import useFetchUserData from "../useFetchUserData";
 
 function LoginPage() {
   const { setUser } = useContext(BlogContext);
-  const { userData } = useFetchUserData();
+
   const userId = useRef();
   const userPassword = useRef();
   const navigate = useNavigate();
@@ -21,21 +17,16 @@ function LoginPage() {
     e.preventDefault();
     const email = userId.current.value;
     const password = userPassword.current.value;
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-
-      if (userData) {
-        console.log(userData);
-        localStorage.setItem("firstName", userData.firstName);
-        localStorage.setItem("lastName", userData.lastName);
-        navigate("/blogs");
-      }
-    } catch (error) {
-      console.error("Invalid Credentials");
-    }
+   try {
+   const response =  await axios.post('http://localhost:3000/Login', {email,password});
+   if (response.status===200){
+    setUser(response.data.user);
+    navigate('/blogs');
+   }
+  } catch (error) {
+   console.error(error, "Error while fetching data", error);
   }
-
+  }
   return (
     <div className="bg-customColor h-screen flex items-center justify-center p-4 ">
       <div className="bg-[#f7f7f7] p-7 rounded-md border  xs:w-fit xs:h-fit w-1/4 sm:w-fit h-1/2 lg:w-96">
@@ -85,5 +76,6 @@ function LoginPage() {
     </div>
   );
 }
+
 
 export default LoginPage;

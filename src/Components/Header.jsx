@@ -5,8 +5,7 @@ import ProfileDropDown from "./ProfileDropDown";
 import { FaSearch } from "react-icons/fa";
 
 function Header() {
-  const { user, clearLocalStorage, handleSearchQuery } =
-    useContext(BlogContext);
+  const { user, clearLocalStorage, handleSearchQuery } = useContext(BlogContext);
   const [isUserLoggedIn, setUserLoggedIn] = useState(false);
   const [isOpenMenu, setOpenMenu] = useState(false);
   const [searchQuery, setSearchingQuery] = useState("");
@@ -32,16 +31,16 @@ function Header() {
 
   const handleSendSearchQuery = (e) => {
     const value = e.target.value.toLowerCase();
-    console.log(value);
+
 
     setSearchingQuery(value);
     if (debouncingRef.current) {
       clearTimeout(debouncingRef.current);
-      console.log("40");
+
     }
     debouncingRef.current = setTimeout(() => {
       handleSearchQuery(value);
-      console.log("45");
+
     }, 300);
   };
 
