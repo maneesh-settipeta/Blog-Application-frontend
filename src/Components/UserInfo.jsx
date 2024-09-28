@@ -5,14 +5,14 @@ import { useContext, useEffect, useState } from "react";
 
 function UserInfo() {
   const { user } = useContext(BlogContext);
-console.log(user.userUuid);
+
 
 const [followingUserDetails, setfollowingUserDetails]= useState([])
 
   useEffect(()=>{
  const getFollowingData = async ()=>{
   const response = await  axios.post("http://localhost:3000/getFollowingUsersData", {loggedinuseruuid:user.userUuid})
-  console.log(response.data.blogs);
+
   const followingDetails = response.data.blogs
   followingDetails.forEach((eachFollowing)=> {
     setfollowingUserDetails([...followingUserDetails, eachFollowing])
@@ -33,8 +33,8 @@ const [followingUserDetails, setfollowingUserDetails]= useState([])
           {user.firstName + " " + user.lastName}
         </h1>
         <p className="text-cyan-600 mb-4">{user.email}</p>
-        <h1 className="text-customcolorred font-medium underline  text-lg">
-          Following :
+        <h1 className="text-customcolorred font-medium   text-lg">
+          Following
         </h1>
         {followingUserDetails.map((eachUserData, index) => (
           <div key={index}>

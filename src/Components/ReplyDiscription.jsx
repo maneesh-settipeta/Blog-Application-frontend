@@ -15,16 +15,18 @@ function ReplyDiscription({ sendId, sendBlogRepliesButtonStatus }) {
           replyData?.map((eachReply) =>
             eachReply?.replies?.map((eachReplyData, index2) => (
               <div key={index2}
-                className="border  xs:ml-3 mr-4 bg-customcolorwarmgray rounded-md mb-2 p-2"
+                className=" border-2 border-gray-300 xs:ml-3 mr-4 rounded-md mb-2 p-2"
               >
-                <p className="p-1 font-medium line-clamp-5 text-ellipsis">
-                  {eachReplyData?.repliedinput}
-                </p>
-                <p className="flex justify-end text-customcolorred mr-2">
+                <div className="flex">
+                <p className=" text-customcolorred mr-2 text-sm">
                   {eachReplyData?.fullname}
                 </p>
-                <p className="flex justify-end text-customColor mr-2">
-                  {eachReplyData?.created_at}
+                <p className=" text-customColor mr-2 text-sm">
+                  {eachReplyData?.created_at.split(' ')[0]}
+                </p>
+                </div>
+                <p className="p-1 font-medium text-gray-500 line-clamp-5 text-ellipsis">
+                  {eachReplyData?.repliedinput}
                 </p>
               </div>
             ))

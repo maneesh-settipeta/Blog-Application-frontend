@@ -10,8 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
 function MainInput() {
-  const { bulkBlog, addBlog, blogs, user, searchQuery, savedBlogsData, savedBlogs} = useContext(BlogContext);
-
+  const { bulkBlog, addBlog, blogs, user, searchQuery, savedBlogsData, savedBlogs } = useContext(BlogContext);
 
   const location = useLocation();
   useEffect(() => {
@@ -23,16 +22,18 @@ function MainInput() {
     getBlogs();
   }, []);
 
+
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
     reset,
   } = useForm();
 
-  useEffect(()=>{
-    const handleFetchSavedBlogs = async()=>{
-      if (location.pathname === "/blogs/bookmarks"){
+  useEffect(() => {
+    const handleFetchSavedBlogs = async () => {
+      if (location.pathname === "/blogs/bookmarks") {
         const getSavedBlogsData = await axios.post("http://localhost:3000/getBookMarksBlogs", { useruuid: user.userUuid });
 
         const BlogsDataFromBE = getSavedBlogsData.data.data
@@ -40,18 +41,19 @@ function MainInput() {
       }
     }
     handleFetchSavedBlogs();
-  },[location.pathname])
- 
+  }, [location.pathname])
+
 
   const [currentState, setCurrentState] = useState({
     toggleInput: false,
     showHeading: false,
+   
   });
 
-  const filteredBlogs = blogs?.filter(
-    (blog) =>
-      blog.usertitle?.toLowerCase()?.includes(searchQuery) 
-  );
+  // const filteredBlogs = blogs?.filter(
+  //   (blog) =>
+  //     blog.usertitle?.toLowerCase()?.includes(searchQuery)
+  // );
 
   let displayBlogs;
   if (searchQuery?.length > 0 && filteredBlogs?.length > 0) {
@@ -72,6 +74,8 @@ function MainInput() {
 
   const handlesendData = async (data) => {
     const { title, description } = data;
+
+    
     const newBlogData = {
       usertitle: title,
       userinput: description,
@@ -83,7 +87,10 @@ function MainInput() {
         ...newBlogData,
         bloguuid: response?.data?.blogid,
         created_at: response?.data?.created_time,
+        firstname: user.firstName,
+        lastname: user.lastName,
       };
+   
       addBlog(newBlogObject);
       reset();
     } catch (error) {
@@ -97,10 +104,7 @@ function MainInput() {
       const reader = new FileReader();
       reader.onload = (e) => {
         const content = e.target.result;
-        setCurrentState((prevState) => ({
-          ...prevState,
-          inputValue: prevState.inputValue + " " + content,
-        }));
+        setValue('description', content);
       };
       reader.readAsText(file);
     }
@@ -120,8 +124,7 @@ function MainInput() {
     );
   }
 
-  const headingText =
-    displayBlogs === savedBlogs ? "Bookmarks" : "Conversations";
+  const headingText = displayBlogs === savedBlogs ? "Bookmarks :" : "Conversations :";
 
   return (
     <div className="flex justify-center">
@@ -129,10 +132,10 @@ function MainInput() {
         <form onSubmit={handleSubmit(handlesendData)}>
           <button
             type="button"
-            className="flex  mb-2 border p-2 border-black rounded-md text-customColor font-medium text-3xl  text-start "
+            className="flex  mb-2 border p-1 border-black rounded-md text-gray-700 font-medium text-2xl  text-start "
             onClick={handleToggleInputs}
           >
-            {currentState.toggleInput ? "Write a post" : "Post Blog"}
+            {currentState.toggleInput ? "Write a post " : "Post a Blog +"}
           </button>
           {currentState.toggleInput ? (
             <div>
@@ -151,8 +154,9 @@ function MainInput() {
               <input
                 type="file"
                 accept=".txt"
+                name="inputtext"
                 onChange={handleFileUpload}
-                className=" pt-4"
+                className="pt-4"
               />
               <p className="font-serif text-2xl  text-gray-950 mt-6">
                 Type Here
@@ -163,7 +167,7 @@ function MainInput() {
                 className="border w-full border-black rounded-md  outline-none h-40 p-2 mt-1 "
                 placeholder="please type here"
               />
-              <p className="text-customcolorred">{errors.title?.message}</p>
+              <p className="text-customcolorred">{errors.description?.message}</p>
               <div className="flex justify-center mt-3">
                 <input
                   type="submit"
@@ -174,7 +178,7 @@ function MainInput() {
           ) : null}
         </form>
         <div className="flex-col justify-center mt-10 ">
-          <h1 className=" text-4xl text-customColor underline mb-6 font-bold ">
+          <h1 className=" text-2xl text-customColor  mb-6 font-medium ">
             {headingText}
           </h1>
           <PostedBlog sendBlogsData={displayBlogs} />

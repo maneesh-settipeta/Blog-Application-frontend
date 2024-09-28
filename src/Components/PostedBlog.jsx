@@ -11,9 +11,8 @@ import { MdDeleteOutline } from "react-icons/md";
 import axios from "axios";
 
 const PostedBlog = ({ sendBlogsData }) => {
-  console.log(sendBlogsData);
-  
-  const { blogs, user, setUser, bulkBlog, repliesData, addReplies, addBlogUuids } = useContext(BlogContext);
+
+  const { blogs, user, setUser, bulkBlog, repliesData, addReplies, addBlogUuids, searchQuery } = useContext(BlogContext);
   const [currentState, setCurrentState] = useState({
     showInputField: null,
     blogReplies: null,
@@ -21,10 +20,24 @@ const PostedBlog = ({ sendBlogsData }) => {
     sendBlogRepliesButtonStatus: false,
   });
 
+  const filteredBlogs = sendBlogsData?.filter(
+    (blog) =>
+      blog.usertitle?.toLowerCase()?.includes(searchQuery)
+  );
+
+  let displayBlogs
+  if (searchQuery?.length > 0 && filteredBlogs?.length > 0) {
+    displayBlogs = filteredBlogs;
+  }
+  else {
+    displayBlogs = sendBlogsData
+  }
+
   const [isBlogLiked, setBlogLike] = useState([]);
+  console.log(isBlogLiked);
   const [following, setFollowing] = useState([]);
   const [isBookMarkSaved, setBookMark] = useState([]);
-  console.log(isBookMarkSaved);
+
 
   useEffect(() => {
     const fetchLikesData = async () => {
@@ -70,23 +83,6 @@ const PostedBlog = ({ sendBlogsData }) => {
     };
     fetchFollowers();
   }, []);
-
-  // const fetchUserSavedBlogs = () => {
-  //   try {
-  //     setUser(user);
-  //     setBlogLike(user?.blogLike);
-  //     setBookMark(user?.bookmarks);
-
-  //     setCurrentState((prevState) => ({
-  //       ...prevState,
-  //       following: user?.following,
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error fetching user saved blogs", error);
-  //   }
-  // };
-
-
 
   const handleShowInput = (id) => {
     setCurrentState((prevState) => ({
@@ -143,29 +139,36 @@ const PostedBlog = ({ sendBlogsData }) => {
 
 
   const handleSendFollow = async (useruuid) => {
+    const allFollowers = following;
+    const unFollow = following?.filter(
+      (followingId) => followingId !== useruuid
+    );
     if (user.firstName === undefined && user.lastName === undefined) {
       alert("Please Login to save the blog");
     }
     else {
       if (following?.includes(useruuid)) {
-        const unFollow = following?.filter(
-          (followingId) => followingId !== useruuid
-        );
+      
         try {
-          const unFollowedUser = await axios.delete(`http://localhost:3000/unFollowedUser/${user.userUuid}/${useruuid}`);
           setFollowing(unFollow);
+          const unFollowedUser = await axios.delete(`http://localhost:3000/unFollowedUser/${user.userUuid}/${useruuid}`);
+     
+
         } catch (error) {
           console.error("Error while deleting data", error);
+          alert("Network Issue please try again");
+          setFollowing(allFollowers)
         }
 
       } else if (!following.includes(useruuid)) {
-        console.log("180");
 
         try {
-          const saveFollowing = await axios.post('http://localhost:3000/followUser', { useruuid: useruuid, loggedinuseruuidvalue: user.userUuid })
           setFollowing([...following, useruuid])
+          const saveFollowing = await axios.post('http://localhost:3000/followUser', { useruuid: useruuid, loggedinuseruuidvalue: user.userUuid })
         } catch (error) {
           console.error("Error Uploading");
+          alert("Network Issue please try again")
+          setFollowing(unFollow);
         }
       }
     }
@@ -174,29 +177,39 @@ const PostedBlog = ({ sendBlogsData }) => {
 
 
   const handleSaveBookmarkBlog = async (bloguuid) => {
+    const filterSavedBookMarks = isBookMarkSaved.filter((savedBookMarks) => savedBookMarks !== bloguuid);
+    const allBookMarks = isBookMarkSaved;
     if (user.firstName === undefined && user.lastName === undefined) {
       alert("Please Login to save the blog");
     }
+
     else {
       if (isBookMarkSaved?.includes(bloguuid)) {
-        const filterSavedBookMarks = isBookMarkSaved.filter((savedBookMarks) => savedBookMarks !== bloguuid)
-        setBookMark(filterSavedBookMarks)
+
+
         try {
+          setBookMark(filterSavedBookMarks)
           const unSavedBlog = await axios.delete(`http://localhost:3000/deleteBookMark/${bloguuid}/${user.userUuid}`);
 
         } catch (error) {
           console.error("error while fetching", error);
+          alert("Network Issue please try again");
+          setBookMark(allBookMarks);
         }
       }
       if (!isBookMarkSaved?.includes(bloguuid)) {
-        setBookMark((prevState) => [
-          ...prevState,
-          bloguuid
-        ])
+
         try {
+          setBookMark((prevState) => [
+            ...prevState,
+            bloguuid
+          ])
           const saveBlogs = await axios.post("http://localhost:3000/saveBookMarks", { savedbloguuid: bloguuid, useruuid: user.userUuid });
+
         } catch (error) {
           console.error("error while fetching ", error);
+          alert("Network Issue please try again");
+          setBookMark(filterSavedBookMarks);
         }
       }
     }
@@ -204,30 +217,40 @@ const PostedBlog = ({ sendBlogsData }) => {
   };
 
   const handleLikeButton = async (id) => {
+    const totalBlogLikes = isBlogLiked;
+    const filterLikes = isBlogLiked.filter((bloguuid) => bloguuid !== id);
     if (user.firstName === undefined && user.lastName === undefined) {
       alert("Please Login to like the blog");
     }
     const bloguuid = id
     if (!isBlogLiked.includes(id)) {
       try {
-        await axios.post('http://localhost:3000/likedBlog', { bloguuid: bloguuid, useruuid: user.userUuid });
         setBlogLike((prevState) => [
           ...prevState,
           bloguuid,
         ])
+        const response = await axios.post('http://localhost:3000/likedBlog', { bloguuid: bloguuid, useruuid: user.userUuid });
+        console.log(response, "Error in try");
+
       } catch (error) {
         console.error("Error while fetching", error);
+        alert("Network Issue please try again")
+        setBlogLike(filterLikes);
       }
     }
     if (isBlogLiked.includes(id)) {
       const filterLikes = isBlogLiked.filter((bloguuid) => bloguuid !== id);
       try {
+        setBlogLike(filterLikes);
         const unLike = await axios.delete(`http://localhost:3000/deleteBlog/${bloguuid}/${user.userUuid}`);
+        console.log(unLike, "Error in try");
+
       } catch (error) {
         console.error("Error while doing unlike", error);
-
+        alert("Network Issue please try again");
+        setBlogLike(totalBlogLikes);
       }
-      setBlogLike(filterLikes);
+
     }
   };
 
@@ -246,19 +269,17 @@ const PostedBlog = ({ sendBlogsData }) => {
   return (
     <>
       {" "}
-      {sendBlogsData?.map((blog) => {
-
-
+      {displayBlogs?.map((blog) => {
 
         return (
           <div
-            className="h-auto    mb-2 mt-2 "
-            key={blog?.blogID + blog?.firstname + blog?.created_time}
+            className="h-auto line-clamp-5 text-ellipsis  mb-2 mt-2"
+            key={blog?.bloguuid + blog?.firstname + blog?.created_time}
           >
             <hr className="mt-1 mb-1"></hr>
-            <div className="flex justify-between">
+            <div className="flex justify-between ">
               <div className="flex flex-row">
-                <p className=" p-1 text-lg mt-2  ml-3  ">
+                <p className=" p-1 text-sm mt-2  ml-3  ">
                   {blog?.firstname + " " + blog?.lastname}
                 </p>
                 {following?.includes(blog?.useruuid) ? (
@@ -268,7 +289,7 @@ const PostedBlog = ({ sendBlogsData }) => {
                         blog?.useruuid
                       )
                     }
-                    className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
+                    className=" mt-2 corde text-sm ml-2 font-sans text-green-500"
                   >
                     Following
                   </button>
@@ -279,7 +300,7 @@ const PostedBlog = ({ sendBlogsData }) => {
                         blog?.useruuid
                       )
                     }
-                    className=" mt-2 corde text-lg ml-2 font-sans text-green-500"
+                    className=" mt-2 corde text-sm ml-2 font-sans text-green-500"
                   >
                     Follow
                   </button>
@@ -307,12 +328,12 @@ const PostedBlog = ({ sendBlogsData }) => {
             </Link>
             <div className=" flex justify-between md:mt-3 ">
               <div className="flex xs:flex-col md:flex-row">
-                <p className="  p-1 text-base ml-3 font-medium mt-7 xs:mt-2 text-customColor">
-                  {blog?.created_at}
+                <p className="  p-1 text-base ml-3 font-medium mt-7 xs:mt-2 text-gray-600">
+                  {blog?.created_at.split(' ')[0]}
                 </p>
                 <p>
                   <button
-                    className="font-sans text-lg mb-3 border xs:pt-0 hover:bg-customcolorred hover:text-white border-customcolorred p-1 w-20 rounded-md ml-4 xs:mt-2 mt-6 font-semibold "
+                    className="font-sans text-lg mb-3 border xs:pt-0 hover:bg-customcolorred hover:text-white border-customcolorred p-1 w-20 rounded-md ml-4 xs:mt-2 mt-6 font-semibold text-gray-600"
                     onClick={() => handleShowInput(blog?.bloguuid)}
                   >
                     {" "}
@@ -321,7 +342,7 @@ const PostedBlog = ({ sendBlogsData }) => {
                 </p>
                 <p>
                   <button
-                    className="font-sans text-lg  text-black p-1  xs:mt-1  underline rounded-md ml-3 mb-2  mt-6 font-semibold "
+                    className="font-sans text-lg   p-1  xs:mt-1 text-gray-600  underline rounded-md ml-3 mb-2  mt-6 font-semibold "
                     onClick={() => handleShowReplies(blog?.bloguuid)}
                   >
                     Replies

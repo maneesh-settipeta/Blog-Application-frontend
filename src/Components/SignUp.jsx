@@ -56,7 +56,7 @@ function SignUp() {
           
         }
         if (response===false){
-          alert("user creation error")
+          console.error("user creation error")
         }
       } catch (error) {
         console.error(error,"User Creation Error");

@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 function MyBlogs() {
   const { user , blogs } = useContext(BlogContext);
 
-  console.log(blogs);
+ 
   
   // const [MyblogsData, setBlogsData] = useState([]);
 
@@ -18,7 +18,7 @@ function MyBlogs() {
   // }, []);
 
   const findMyBlogs = blogs.filter((blog) => blog.useruuid === user.userUuid);
-  console.log(findMyBlogs);
+
   
 
   return (
@@ -31,17 +31,13 @@ function MyBlogs() {
                 key={index}
                 className="w-full h-auto border  mb-2 mt-3 rounded-md  border-black  p-4 "
               >
-                <h1>
-                  <span className="font-medium text-lg text-customcolorred">
-                    User Title:{" "}
-                  </span>
+                <h1 className="text-lg font-bold font-mono">
+              
                   {blog?.usertitle}
                 </h1>
-                <p>
+                <p className=" text-sm font-medium text-gray-600">
                   {" "}
-                  <span className="font-medium text-lg text-customcolorred">
-                    User Input:{" "}
-                  </span>
+                
                   {blog?.userinput}
                 </p>
               </div>

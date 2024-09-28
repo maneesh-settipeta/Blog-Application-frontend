@@ -9,6 +9,10 @@ import DetailBlog from "./DetailBlog";
 import LoginPage from "./LoginPage";
 import Profile from "./Profile";
 import SignUpUpdated from "./SignUpUpdated";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+
 
 const routerComp = createBrowserRouter([
   {
@@ -39,6 +43,7 @@ const routerComp = createBrowserRouter([
 ]);
 
 function RoutingComp() {
+
   return (
     <>
       <RouterProvider router={routerComp}></RouterProvider>

@@ -4,14 +4,11 @@ import BlogContext from "../Store/StoreInput";
 function MySavedBlogs() {
   const { user , blogs , savedBlogsData, savedBlogUuids} = useContext(BlogContext);
 
-  console.log(blogs);
-  console.log(savedBlogUuids);
-  
+
   const filterBlogsFromUuids = blogs.filter((eachBlog)=>
     savedBlogUuids.includes(eachBlog.bloguuid)
   );
-  console.log(filterBlogsFromUuids);
-  
+ 
 
   return (
     <>
@@ -21,17 +18,12 @@ function MySavedBlogs() {
             key={index}
             className="w-full h-auto border  mb-2 mt-3 rounded-md  border-black  p-4 "
           >
-            <h1>
-              <span className="font-medium text-lg text-customcolorred">
-                User Title:{" "}
-              </span>
+            <h1 className="text-lg font-bold font-mono">
+            
               {eachMySavedBlog?.usertitle}
             </h1>
-            <p>
-              {" "}
-              <span className="font-medium text-lg text-customcolorred">
-                User Input:{" "}
-              </span>
+            <p className=" text-sm font-medium text-gray-600">
+            
               {eachMySavedBlog?.userinput}
             </p>
           </div>

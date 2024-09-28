@@ -5,9 +5,14 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import BlogContext from "../Store/StoreInput";
 import { useContext } from "react";
+import { useNetwork } from "../Store/useNetwork";
+
+
 
 function LoginPage() {
   const { setUser } = useContext(BlogContext);
+  const isOnline= useNetwork()
+
 
   const userId = useRef();
   const userPassword = useRef();
@@ -27,7 +32,15 @@ function LoginPage() {
    console.error(error, "Error while fetching data", error);
   }
   }
+
+  
+
+ 
   return (
+    
+    <>{!isOnline ?
+      <h1 className=" bg-customcolorred text-white flex justify-center p-2">Network Down</h1> : null
+    }
     <div className="bg-customColor h-screen flex items-center justify-center p-4 ">
       <div className="bg-[#f7f7f7] p-7 rounded-md border  xs:w-fit xs:h-fit w-1/4 sm:w-fit h-1/2 lg:w-96">
         <h1 className="text-xl font-bold flex justify-center">Login</h1>
@@ -59,7 +72,7 @@ function LoginPage() {
         </div>
         <div className="flex justify-end">
           <button
-            className="bg-customcolorred p-2 text-white/80 text-lg mt-5 hover:font-medium outline-none rounded-md hover:text-black hover:shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out"
+            className="bg-customcolorred p-2 text-white/80 text-lg mt-5 hover:font-medium  rounded-md hover:text-black hover:shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out"
             onClick={handleUserLogin}
           >
             Sign-In
@@ -74,6 +87,8 @@ function LoginPage() {
         </div>
       </div>
     </div>
+    </>
+
   );
 }
 

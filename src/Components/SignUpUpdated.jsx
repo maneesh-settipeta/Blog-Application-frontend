@@ -134,7 +134,7 @@ function SignUpUpdated() {
             <div className="flex justify-end">
             <input
               type="submit"
-             className="bg-customcolorred p-2 text-white/80 text-lg mt-5 hover:font-medium outline-none rounded-md hover:text-black hover:shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out"
+             className="bg-customcolorred p-2 text-white/80 text-lg mt-5 hover:font-medium  rounded-md hover:text-black hover:shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out"
             />
             </div>
             <div className="flex justify-center mt-5">

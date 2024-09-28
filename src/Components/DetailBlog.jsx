@@ -1,24 +1,56 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import BlogContext from "../Store/StoreInput";
 import BlogReplyInput from "./BlogReplyInput";
 import axios from "axios";
 function DetailBlog() {
 
-  const { blogs,repliesData,  } = useContext(BlogContext);
-  console.log(repliesData);
-  
+  const { blogs, repliesData, } = useContext(BlogContext);
+  const [blogDataAfterReload, setBlogDataAfterReload] = useState();
+
+  const { state } = useLocation();
+  const findBlogiD = state.blogid;
+
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const getBlog = await axios.post('http://localhost:3000/getSpecificBlog', { bloguuid: findBlogiD })
+        setBlogDataAfterReload(getBlog.data.blogData[0]);
+      } catch (error) {
+        console.error(error, "Error While Fetching Data");
+      }
+    }
+    fetchBlog();
+  }, []);
+
+  // useEffect(() => {
+  //   const fetchBlogReplies = async () => {
+  //     try {
+  //       const getBlog = await axios.post('http://localhost:3000/getSpecificBlogReplies', { bloguuid: findBlogiD })
+  //       console.log(getBlog);
+  //       // if (repliesDataFromInitial===undefined){
+  //       //   console.log("35");
+  //       //   setRepliesData(getBlog.data.blogData);
+  //       // }
+        
+  //     } catch (error) {
+  //       console.error(error, "Error While Fetching Data");
+  //     }
+  //   }
+  //   fetchBlogReplies();
+  // }, []);
+
+
   const [currentState, setCurrentState] = useState({
     showReplyButton: null,
     showReplies: false,
   });
+
   const [repliesDataFromInitial, setRepliesData] = useState([])
-  console.log(repliesDataFromInitial);
-  
-  const { state } = useLocation();
-  const findBlogiD = state.blogid;
 
   const findBlog = blogs.find((blog) => blog.bloguuid === findBlogiD);
+
+
 
   const handleShowReplyInputElement = (id) => {
     setCurrentState((prevState) => ({
@@ -26,17 +58,14 @@ function DetailBlog() {
       showReplyButton: id,
     }));
   };
-  console.log(currentState.showReplyButton);
-  
+
+
 
   const handleReplyClick = (updatedReplyObject) => {
-    console.log(updatedReplyObject);
     setRepliesData([...repliesDataFromInitial, updatedReplyObject]);
   };
 
   const handleCancelButtonFun = (id) => {
-    console.log("33, detailblog");
-    
     setCurrentState((prevState) => {
       if (prevState.showReplyButton === id) {
         return {
@@ -48,30 +77,25 @@ function DetailBlog() {
     });
   };
 
-  const handleShowReplies = async(blogID) => {
-    console.log("37");
+
+  const handleShowReplies = async (blogID) => {
+    console.log(blogID);
+    
     const findReplies = repliesData?.find((repliesDataInContext) => repliesDataInContext.bloguuid === blogID);
-    console.log(findReplies,"findreplies");
-    if (!findReplies === undefined){
+    if (!findReplies === undefined) {
       setRepliesData(findReplies.replies);
     }
-  
-
-    
-    if (findReplies===undefined) {
+    if (findReplies === undefined) {
       try {
-        const bloguuid = blogID
-        const response = await axios.post("http://localhost:3000/getReplies", { bloguuid: findBlog.bloguuid });
+        // const bloguuid = blogID
+        const response = await axios.post("http://localhost:3000/getReplies", { bloguuid: blogID });
         const repliesObjectData = response.data.data;
         console.log(repliesObjectData);
-        console.log("success");
         setRepliesData(repliesObjectData);
-        
       } catch (error) {
-        console.log("error");
         console.error("Error in frontend", error);
       }
-    } 
+    }
     setCurrentState((prevState) => ({
       ...prevState,
       showReplies: !currentState.showReplies,
@@ -79,47 +103,62 @@ function DetailBlog() {
   };
 
 
+  const displayBlog = findBlog === undefined ? blogDataAfterReload : findBlog
+
+
+  
+  
+
+
   return (
     <div className="flex justify-center">
-      <div className="md:w-1/2 xs:w-full xs:mr-1 xs:p-2">
-        <h1 className="p-4 font-medium text-4xl text-left text-customColors underline">
-          {findBlog?.usertitle}
+      <div className="md:w-1/2 xs:w-full xs:mr-1 xs:p-2 line-clamp-5 text-ellipsis ">
+        <div className="flex mb-6">
+          <button className=" text-customcolorred text-sm">
+            {displayBlog?.firstname + " " + displayBlog?.lastname}
+
+          </button>
+          <p className="flex pt-0  justify-end text-sm ml-2   text-customColor">
+            {displayBlog?.created_at.split(' ')[0]}
+          </p>
+        </div>
+
+        <h1 className="p-0 font-medium text-2xl text-left font-mono ">
+          {displayBlog?.usertitle}
         </h1>
-        <p className="flex  justify-end  text-customcolorred">
-          {findBlog?.firstname + " " + findBlog?.lastname}
+
+        <p className="p-0 font-medium text-lg text-gray-700 ">
+          {displayBlog?.userinput}
         </p>
-        <p className="flex pt-1  justify-end   text-customColor">
-          {findBlog?.dateCreated}
-        </p>
-        <p className="p-4 font-medium text-2xl text-left ">
-          <span className=" underline">Description:</span> {findBlog?.userinput}
-        </p>
-        <button
-          onClick={() => handleShowReplyInputElement(findBlog?.bloguuid)}
-          className="p-2 bg-customcolorred outline-none text-gray-50 text-lg ml-4 rounded-md mt-2 mb-4"
-        >
-          {" "}
-          Reply
-        </button>
-        {currentState.showReplyButton === findBlog?.bloguuid ? (
+        <div className="flex justify-end">
+          <button
+            onClick={() => handleShowReplyInputElement(displayBlog?.bloguuid)}
+            className="p-2 bg-customcolorred outline-none text-gray-50 text-sm  mt-2 mb-4"
+          >
+            {" "}
+            Reply
+          </button>
+
+          <button
+            onClick={() => handleShowReplies(displayBlog?.bloguuid)}
+            className="p-2 bg-white outline-none text-customcolorred-50 underline border border-gray-600 ml-1 text-sm  mt-2 mb-4"
+          >
+            Replies
+          </button>
+        </div>
+        {currentState.showReplyButton === displayBlog?.bloguuid ? (
           <BlogReplyInput
             sendOnClick={handleCancelButtonFun}
-            bloguuid={findBlog.bloguuid}
+            bloguuid={displayBlog?.bloguuid}
             replyOnClick={handleReplyClick}
 
           />
         ) : null}
-        <button
-          onClick={()=>handleShowReplies(findBlog.bloguuid)}
-          className="pl-4 pt-3 pb-1 text-lg font-medium text-customcolorred underline"
-        >
-          Replies
-        </button>
-        {repliesDataFromInitial&&
+        {repliesDataFromInitial &&
           currentState.showReplies &&
           repliesDataFromInitial.map((reply, index) => (
-            <div key={index} className=" border border-x-0">
-             
+            <div key={index} className="flex  border border-x-0">
+
               <p className="pl-4 text-sm p-5 font-medium">{reply.repliedinput}</p>
               <div className="flex justify-end  ">
                 <p className="text-customcolorred mr-4">{reply.fullname}</p>

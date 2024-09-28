@@ -144,7 +144,7 @@ export function ProjectContext({ children }) {
       savedBlogUuids:[],
     }
   );
-  console.log(projectStateReducer.savedBlogUuids);
+
   
   function bulkBlog(blogData) {
     setProjectDispatch({
@@ -194,7 +194,7 @@ export function ProjectContext({ children }) {
   }
 
   const addBlogUuids =(bloguuidData)=>{
-    console.log(bloguuidData,"Coming into 197");
+
     setProjectDispatch({
       type:"ADD-BLOGUUIDS",
       bloguuids:bloguuidData,
