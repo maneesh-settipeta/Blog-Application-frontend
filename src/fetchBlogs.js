@@ -1,7 +1,8 @@
+import { baseURL } from "./URL";
 import axios from "axios";
  const fetchBlogs = async()=> {
     try {
-        const response = await axios.get('http://localhost:3000/blogs');
+        const response = await axios.get(`${baseURL}/blogs`);
        
         if (response.status === 200) {
 

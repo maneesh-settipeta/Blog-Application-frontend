@@ -23,7 +23,7 @@ function LoginPage() {
     const email = userId.current.value;
     const password = userPassword.current.value;
    try {
-   const response =  await axios.post('http://localhost:3000/Login', {email,password});
+   const response =  await axios.post(`${baseURL}/Login`, {email,password});
    if (response.status===200){
     setUser(response.data.user);
     navigate('/blogs');

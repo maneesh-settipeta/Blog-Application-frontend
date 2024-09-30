@@ -10,7 +10,7 @@ function Profile() {
  const {user}= useContext(BlogContext)
 
   useEffect(()=>{
-    const userData = axios.post('http://localhost:3000/getUserDetails',{useruuid:user.userUuid});
+    const userData = axios.post(`${baseURL}/getUserDetails`,{useruuid:user.userUuid});
   },[]);
 
   const [showMyBlogs, setShowMyBlogs] = useState(true);

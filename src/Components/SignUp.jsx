@@ -50,7 +50,7 @@ function SignUp() {
         userUuid:uuid,
       }
       try {
-        const response = await axios.post('http://localhost:3000/SignUp', userDataToPostGresSql);
+        const response = await axios.post(`${baseURL}/SignUp`, userDataToPostGresSql);
         if (response===true){
           alert("User created succesfully");
           

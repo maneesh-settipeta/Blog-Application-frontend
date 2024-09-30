@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom";
 import BlogContext from "../Store/StoreInput";
 import BlogReplyInput from "./BlogReplyInput";
 import axios from "axios";
+import { baseURL } from "../URL";
+
 function DetailBlog() {
 
   const { blogs, repliesData, } = useContext(BlogContext);
@@ -14,7 +16,7 @@ function DetailBlog() {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const getBlog = await axios.post('http://localhost:3000/getSpecificBlog', { bloguuid: findBlogiD })
+        const getBlog = await axios.post(`${baseURL}/getSpecificBlog`, { bloguuid: findBlogiD })
         setBlogDataAfterReload(getBlog.data.blogData[0]);
       } catch (error) {
         console.error(error, "Error While Fetching Data");
@@ -23,22 +25,6 @@ function DetailBlog() {
     fetchBlog();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchBlogReplies = async () => {
-  //     try {
-  //       const getBlog = await axios.post('http://localhost:3000/getSpecificBlogReplies', { bloguuid: findBlogiD })
-  //       console.log(getBlog);
-  //       // if (repliesDataFromInitial===undefined){
-  //       //   console.log("35");
-  //       //   setRepliesData(getBlog.data.blogData);
-  //       // }
-        
-  //     } catch (error) {
-  //       console.error(error, "Error While Fetching Data");
-  //     }
-  //   }
-  //   fetchBlogReplies();
-  // }, []);
 
 
   const [currentState, setCurrentState] = useState({
@@ -87,10 +73,8 @@ function DetailBlog() {
     }
     if (findReplies === undefined) {
       try {
-        // const bloguuid = blogID
-        const response = await axios.post("http://localhost:3000/getReplies", { bloguuid: blogID });
+        const response = await axios.post(`${baseURL}/getReplies`, { bloguuid: blogID });
         const repliesObjectData = response.data.data;
-        console.log(repliesObjectData);
         setRepliesData(repliesObjectData);
       } catch (error) {
         console.error("Error in frontend", error);

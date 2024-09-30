@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import BlogContext from "../Store/StoreInput";
 import axios from "axios";
+import { baseURL } from "../URL";
 
 function BlogReplyInput({  sendOnClick, replyOnClick, bloguuid }) {
   const { addReplies, user } = useContext(BlogContext);
@@ -32,7 +33,7 @@ function BlogReplyInput({  sendOnClick, replyOnClick, bloguuid }) {
     };
     let updatedReplyObject;
     try {
-      const response = await axios.post("http://localhost:3000/addReplies", replyObject);
+      const response = await axios.post(`${baseURL}/addReplies`, replyObject);
        updatedReplyObject ={
         repliedinput: replyInputState.repliedinput ,
         fullname: replyInputState.fullname ,

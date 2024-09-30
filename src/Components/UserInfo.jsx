@@ -11,7 +11,7 @@ const [followingUserDetails, setfollowingUserDetails]= useState([])
 
   useEffect(()=>{
  const getFollowingData = async ()=>{
-  const response = await  axios.post("http://localhost:3000/getFollowingUsersData", {loggedinuseruuid:user.userUuid})
+  const response = await  axios.post(`${baseURL}/getFollowingUsersData`, {loggedinuseruuid:user.userUuid})
 
   const followingDetails = response.data.blogs
   followingDetails.forEach((eachFollowing)=> {

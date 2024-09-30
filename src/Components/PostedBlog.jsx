@@ -9,6 +9,7 @@ import { FcLike } from "react-icons/fc";
 import { FaRegHeart } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 import axios from "axios";
+import { baseURL } from "../URL";
 
 const PostedBlog = ({ sendBlogsData }) => {
 
@@ -42,7 +43,7 @@ const PostedBlog = ({ sendBlogsData }) => {
   useEffect(() => {
     const fetchLikesData = async () => {
       try {
-        const getLikesData = await axios.post('http://localhost:3000/getLikes', { useruuid: user.userUuid });
+        const getLikesData = await axios.post(`${baseURL}/getLikes`, { useruuid: user.userUuid });
         const setLikesToArray = getLikesData.data.data;
         const onlyValues = setLikesToArray.map(eachValue => Object.values(eachValue)[0]);
         setBlogLike(onlyValues);
@@ -57,7 +58,7 @@ const PostedBlog = ({ sendBlogsData }) => {
   useEffect(() => {
     const fetchBookMarksData = async () => {
       try {
-        const getBookMarks = await axios.post('http://localhost:3000/getBookMarks', { useruuid: user.userUuid });
+        const getBookMarks = await axios.post(`${baseURL}/getBookMarks`, { useruuid: user.userUuid });
         const setBookMarksToArray = getBookMarks.data.data;
         const onlyValues = setBookMarksToArray.map(eachValue => Object.values(eachValue)[0]);;
         setBookMark(onlyValues)
@@ -73,7 +74,7 @@ const PostedBlog = ({ sendBlogsData }) => {
   useEffect(() => {
     const fetchFollowers = async () => {
       try {
-        const getFollowers = await axios.post('http://localhost:3000/getFollowers', { useruuid: user.userUuid });
+        const getFollowers = await axios.post(`${baseURL}/getFollowers`, { useruuid: user.userUuid });
         const setFollowers = getFollowers.data.data;
         const onlyValues = setFollowers.map((eachValue) => Object.values(eachValue)[0]);
         setFollowing(onlyValues);
@@ -110,7 +111,7 @@ const PostedBlog = ({ sendBlogsData }) => {
     if (!findReplies) {
       try {
         const bloguuid = blogID
-        const response = await axios.post("http://localhost:3000/getReplies", { bloguuid: bloguuid });
+        const response = await axios.post(`${baseURL}/getReplies`, { bloguuid: bloguuid });
         const repliesObjectData = response.data.data;
         repliesObjectData.forEach((singleReplyObject) => addReplies(singleReplyObject));
       } catch (error) {
@@ -151,7 +152,7 @@ const PostedBlog = ({ sendBlogsData }) => {
       
         try {
           setFollowing(unFollow);
-          const unFollowedUser = await axios.delete(`http://localhost:3000/unFollowedUser/${user.userUuid}/${useruuid}`);
+          const unFollowedUser = await axios.delete(`${baseURL}/unFollowedUser/${user.userUuid}/${useruuid}`);
      
 
         } catch (error) {
@@ -164,7 +165,7 @@ const PostedBlog = ({ sendBlogsData }) => {
 
         try {
           setFollowing([...following, useruuid])
-          const saveFollowing = await axios.post('http://localhost:3000/followUser', { useruuid: useruuid, loggedinuseruuidvalue: user.userUuid })
+          const saveFollowing = await axios.post(`${baseURL}/followUser`, { useruuid: useruuid, loggedinuseruuidvalue: user.userUuid })
         } catch (error) {
           console.error("Error Uploading");
           alert("Network Issue please try again")
@@ -189,7 +190,7 @@ const PostedBlog = ({ sendBlogsData }) => {
 
         try {
           setBookMark(filterSavedBookMarks)
-          const unSavedBlog = await axios.delete(`http://localhost:3000/deleteBookMark/${bloguuid}/${user.userUuid}`);
+          const unSavedBlog = await axios.delete(`${baseURL}/deleteBookMark/${bloguuid}/${user.userUuid}`);
 
         } catch (error) {
           console.error("error while fetching", error);
@@ -204,7 +205,7 @@ const PostedBlog = ({ sendBlogsData }) => {
             ...prevState,
             bloguuid
           ])
-          const saveBlogs = await axios.post("http://localhost:3000/saveBookMarks", { savedbloguuid: bloguuid, useruuid: user.userUuid });
+          const saveBlogs = await axios.post(`${baseURL}saveBookMarks`, { savedbloguuid: bloguuid, useruuid: user.userUuid });
 
         } catch (error) {
           console.error("error while fetching ", error);
@@ -229,7 +230,7 @@ const PostedBlog = ({ sendBlogsData }) => {
           ...prevState,
           bloguuid,
         ])
-        const response = await axios.post('http://localhost:3000/likedBlog', { bloguuid: bloguuid, useruuid: user.userUuid });
+        const response = await axios.post(`${baseURL}/likedBlog`, { bloguuid: bloguuid, useruuid: user.userUuid });
         console.log(response, "Error in try");
 
       } catch (error) {
@@ -242,7 +243,7 @@ const PostedBlog = ({ sendBlogsData }) => {
       const filterLikes = isBlogLiked.filter((bloguuid) => bloguuid !== id);
       try {
         setBlogLike(filterLikes);
-        const unLike = await axios.delete(`http://localhost:3000/deleteBlog/${bloguuid}/${user.userUuid}`);
+        const unLike = await axios.delete(`${baseURL}/deleteBlog/${bloguuid}/${user.userUuid}`);
         console.log(unLike, "Error in try");
 
       } catch (error) {
