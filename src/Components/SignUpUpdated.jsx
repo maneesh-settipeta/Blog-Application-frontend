@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid"; 
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { baseURL } from "../URL";
 import { Navigate, useNavigate } from "react-router-dom";
 function SignUpUpdated() {
   const {
