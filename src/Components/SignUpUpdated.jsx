@@ -57,7 +57,7 @@ function SignUpUpdated() {
 
     
     try {
-      const response = await axios.post('http://localhost:3000/SignUp', userDataToPostGresSql);
+      const response = await axios.post(`${baseURL}/SignUp`, userDataToPostGresSql);
       navigate('/Login')
     } catch (error) {
       console.error(error,"User Creation Error");
