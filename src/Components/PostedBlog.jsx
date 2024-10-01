@@ -205,7 +205,7 @@ const PostedBlog = ({ sendBlogsData }) => {
             ...prevState,
             bloguuid
           ])
-          const saveBlogs = await axios.post(`${baseURL}saveBookMarks`, { savedbloguuid: bloguuid, useruuid: user.userUuid });
+          const saveBlogs = await axios.post(`${baseURL}/saveBookMarks`, { savedbloguuid: bloguuid, useruuid: user.userUuid });
 
         } catch (error) {
           console.error("error while fetching ", error);
