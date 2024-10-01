@@ -95,8 +95,8 @@ function DetailBlog() {
 
 
   return (
-    <div className="flex justify-center">
-      <div className="md:w-1/2 xs:w-full xs:mr-1 xs:p-2 line-clamp-5 text-ellipsis ">
+    <div className="flex  justify-center">
+      <div className="md:w-1/2 xs:w-full xs:mr-1 xs:p-2  ">
         <div className="flex mb-6">
           <button className=" text-customcolorred text-sm">
             {displayBlog?.firstname + " " + displayBlog?.lastname}
