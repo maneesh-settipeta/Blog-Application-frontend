@@ -1,7 +1,7 @@
 import axios from "axios";
 import BlogContext from "../Store/StoreInput";
 import { useContext, useEffect, useState } from "react";
-
+import { baseURL } from "../URL";
 
 function UserInfo() {
   const { user } = useContext(BlogContext);

@@ -4,7 +4,7 @@ import UserInfo from "./UserInfo";
 import MyBlogs from "./MyBlogs";
 import MySavedBlogs from "./MySavedBlogs";
 import axios from "axios";
-
+import { baseURL } from "../URL";
 
 function Profile() {
  const {user}= useContext(BlogContext)
