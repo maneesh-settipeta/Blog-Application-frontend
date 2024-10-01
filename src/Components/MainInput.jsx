@@ -112,17 +112,9 @@ function MainInput() {
     return <Shimmer />;
   }
 
-  // if (searchQuery?.length !== 0 && filteredBlogs?.length === 0) {
-  //   return (
-  //     <>
-  //       <h1 className=" text-4xl text-customColor flex justify-center  mb-6 font-bold ">
-  //         {"No Data found"}
-  //       </h1>
-  //     </>
-  //   );
-  // }
 
-  const headingText = displayBlogs === savedBlogs ? "Bookmarks :" : "Conversations :";
+
+  const headingText = displayBlogs === savedBlogsData ? "Bookmarks :" : "Conversations :";
 
   return (
     <div className="flex justify-center">
