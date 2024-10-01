@@ -56,12 +56,10 @@ function MainInput() {
   // );
 
   let displayBlogs;
-  if (searchQuery?.length > 0 && filteredBlogs?.length > 0) {
-    displayBlogs = filteredBlogs;
-  } else if (location.pathname === "/blogs/bookmarks") {
+  if (location.pathname === "/blogs/bookmarks") {
     displayBlogs = savedBlogsData;
-  } else {
-    displayBlogs = blogs;
+  } else{
+    displayBlogs = blogs
   }
 
   const [loading, setLoading] = useState(true);
