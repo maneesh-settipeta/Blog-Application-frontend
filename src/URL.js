@@ -1,1 +1,1 @@
-export const baseURL = "https://blog-api.maneeshsettipeta.tech/blogs";
+export const baseURL = "https://blog-api.maneeshsettipeta.tech";
