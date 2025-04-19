@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import BlogContext from "../Store/StoreInput";
 import ProfileDropDown from "./ProfileDropDown";
 import { FaSearch } from "react-icons/fa";
+import React from "react";
 
 function Header() {
   const { user, clearLocalStorage, handleSearchQuery } = useContext(BlogContext);

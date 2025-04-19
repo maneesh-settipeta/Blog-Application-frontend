@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
+import React from "react";
 
 function ProfileDropDown({ isOpen, clearLocalStorage, isClosedDropDown }) {
 
- function handleHideDropDown() {
+  function handleHideDropDown() {
     isClosedDropDown();
   }
 

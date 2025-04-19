@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { auth, db } from "../firebase.js";
 import { setDoc, doc, updateDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { v4 as uuidv4 } from "uuid"; 
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+import React from "react";
 
 
 function SignUp() {
@@ -42,25 +43,25 @@ function SignUp() {
     //     followingUserDetails: [],
     //   };
     //   const userDataWithId = await setDoc(doc(db, "users", user.uid), userData);
-      const userDataToPostGresSql = {
-        firstName: firstname,
-        lastName: lastname,
-        email: email,
-        password: password,
-        userUuid:uuid,
+    const userDataToPostGresSql = {
+      firstName: firstname,
+      lastName: lastname,
+      email: email,
+      password: password,
+      userUuid: uuid,
+    }
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_baseURL}SignUp`, userDataToPostGresSql);
+      if (response === true) {
+        alert("User created succesfully");
+
       }
-      try {
-        const response = await axios.post(`${baseURL}/SignUp`, userDataToPostGresSql);
-        if (response===true){
-          alert("User created succesfully");
-          
-        }
-        if (response===false){
-          console.error("user creation error")
-        }
-      } catch (error) {
-        console.error(error,"User Creation Error");
+      if (response === false) {
+        console.error("user creation error")
       }
+    } catch (error) {
+      console.error(error, "User Creation Error");
+    }
     // } catch (error) {
     //   console.error("Error signing up: ", error);
     // }

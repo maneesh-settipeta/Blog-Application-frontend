@@ -1,7 +1,7 @@
 import axios from "axios";
 import BlogContext from "../Store/StoreInput";
 import { useContext, useEffect, useState } from "react";
-import { baseURL } from "../URL";
+import React from "react";
 
 function UserInfo() {
   const { user } = useContext(BlogContext);
@@ -11,7 +11,7 @@ function UserInfo() {
 
   useEffect(() => {
     const getFollowingData = async () => {
-      const response = await axios.post(`${baseURL}/followers`, { loggedinuseruuid: user.userUuid })
+      const response = await axios.post(`${import.meta.env.VITE_baseURL}followers`, { loggedinuseruuid: user.userUuid })
 
       const followingDetails = response.data.blogs
       followingDetails.forEach((eachFollowing) => {

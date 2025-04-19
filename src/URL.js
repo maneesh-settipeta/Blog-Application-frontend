@@ -1,1 +1,1 @@
-export const baseURL = "https://blog-api.maneeshsettipeta.tech";
+// export const import.meta.env.VITE_baseURL = "https://blogapp-backend.maneeshsettipeta.tech";

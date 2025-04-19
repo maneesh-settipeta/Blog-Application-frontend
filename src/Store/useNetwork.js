@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import React from "react";
 export const useNetwork = () => {
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     console.log(navigator.onLine);

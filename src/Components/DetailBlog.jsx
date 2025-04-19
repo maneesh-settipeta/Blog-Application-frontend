@@ -3,7 +3,8 @@ import { useLocation } from "react-router-dom";
 import BlogContext from "../Store/StoreInput";
 import BlogReplyInput from "./BlogReplyInput";
 import axios from "axios";
-import { baseURL } from "../URL";
+import React from "react";
+
 
 function DetailBlog() {
 
@@ -16,7 +17,7 @@ function DetailBlog() {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const getBlog = await axios.post(`${baseURL}/specificBlog`, { bloguuid: findBlogiD })
+        const getBlog = await axios.post(`${import.meta.env.VITE_baseURL}specificBlog`, { bloguuid: findBlogiD })
         setBlogDataAfterReload(getBlog.data.blogData[0]);
       } catch (error) {
         console.error(error, "Error While Fetching Data");
@@ -73,7 +74,7 @@ function DetailBlog() {
     }
     if (findReplies === undefined) {
       try {
-        const response = await axios.post(`${baseURL}/replies`, { bloguuid: blogID });
+        const response = await axios.post(`${import.meta.env.VITE_baseURL}getReplies`, { bloguuid: blogID });
         const repliesObjectData = response.data.data;
         setRepliesData(repliesObjectData);
       } catch (error) {
@@ -88,9 +89,6 @@ function DetailBlog() {
 
 
   const displayBlog = findBlog === undefined ? blogDataAfterReload : findBlog
-
-
-
 
 
 
@@ -143,10 +141,11 @@ function DetailBlog() {
           repliesDataFromInitial.map((reply, index) => (
             <div key={index} className="flex  border border-x-0">
 
-              <p className="pl-4 text-sm p-5 font-medium">{reply.repliedinput}</p>
-              <div className="flex justify-end  ">
+
+              <div className="flex-col  ">
                 <p className="text-customcolorred mr-4">{reply.fullname}</p>
                 <p>{reply.created_at}</p>
+                <p className=" text-sm pt-3 font-medium">{reply.repliedinput}</p>
               </div>
             </div>
           ))}

@@ -1,8 +1,8 @@
-import { baseURL } from "./URL";
+// import { import.meta.env.VITE_baseURL } from "./URL";
 import axios from "axios";
 const fetchBlogs = async () => {
     try {
-        const response = await axios.get(`${baseURL}/blogs`);
+        const response = await axios.get(`${import.meta.env.VITE_baseURL}blogs`);
 
         if (response.status === 200) {
 

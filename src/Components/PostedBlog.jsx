@@ -9,7 +9,8 @@ import { FcLike } from "react-icons/fc";
 import { FaRegHeart } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 import axios from "axios";
-import { baseURL } from "../URL";
+import React from "react";
+
 
 const PostedBlog = ({ sendBlogsData }) => {
 
@@ -43,7 +44,7 @@ const PostedBlog = ({ sendBlogsData }) => {
   useEffect(() => {
     const fetchLikesData = async () => {
       try {
-        const getLikesData = await axios.post(`${baseURL}/likes`, { useruuid: user.userUuid });
+        const getLikesData = await axios.post(`${import.meta.env.VITE_baseURL}likes`, { useruuid: user.userUuid });
         const setLikesToArray = getLikesData.data.data;
         const onlyValues = setLikesToArray.map(eachValue => Object.values(eachValue)[0]);
         setBlogLike(onlyValues);
@@ -58,7 +59,7 @@ const PostedBlog = ({ sendBlogsData }) => {
   useEffect(() => {
     const fetchBookMarksData = async () => {
       try {
-        const getBookMarks = await axios.get(`${baseURL}/bookMarks`, { useruuid: user.userUuid });
+        const getBookMarks = await axios.get(`${import.meta.env.VITE_baseURL}saveBookMarks`, { useruuid: user.userUuid });
         const setBookMarksToArray = getBookMarks.data.data;
         const onlyValues = setBookMarksToArray.map(eachValue => Object.values(eachValue)[0]);
         setBookMark(onlyValues)
@@ -74,7 +75,7 @@ const PostedBlog = ({ sendBlogsData }) => {
   useEffect(() => {
     const fetchFollowers = async () => {
       try {
-        const getFollowers = await axios.get(`${baseURL}/followers`, { useruuid: user.userUuid });
+        const getFollowers = await axios.get(`${import.meta.env.VITE_baseURL}followers`, { useruuid: user.userUuid });
         const setFollowers = getFollowers.data.data;
         const onlyValues = setFollowers.map((eachValue) => Object.values(eachValue)[0]);
         setFollowing(onlyValues);
@@ -111,7 +112,7 @@ const PostedBlog = ({ sendBlogsData }) => {
     if (!findReplies) {
       try {
         const bloguuid = blogID
-        const response = await axios.post(`${baseURL}/replies`, { bloguuid: bloguuid });
+        const response = await axios.post(`${import.meta.env.VITE_baseURL}getReplies`, { bloguuid: bloguuid });
         const repliesObjectData = response.data.data;
         repliesObjectData.forEach((singleReplyObject) => addReplies(singleReplyObject));
       } catch (error) {
@@ -152,7 +153,7 @@ const PostedBlog = ({ sendBlogsData }) => {
 
         try {
           setFollowing(unFollow);
-          const unFollowedUser = await axios.delete(`${baseURL}/followUser/${user.userUuid}/${useruuid}`);
+          const unFollowedUser = await axios.delete(`${import.meta.env.VITE_baseURL}unFollowedUser/${user.userUuid}/${useruuid}`);
 
 
         } catch (error) {
@@ -165,7 +166,7 @@ const PostedBlog = ({ sendBlogsData }) => {
 
         try {
           setFollowing([...following, useruuid])
-          const saveFollowing = await axios.post(`${baseURL}/followUser`, { useruuid: useruuid, loggedinuseruuidvalue: user.userUuid })
+          const saveFollowing = await axios.post(`${import.meta.env.VITE_baseURL}followUser`, { useruuid: useruuid, loggedinuseruuidvalue: user.userUuid })
         } catch (error) {
           console.error("Error Uploading");
           alert("Network Issue please try again")
@@ -190,7 +191,7 @@ const PostedBlog = ({ sendBlogsData }) => {
 
         try {
           setBookMark(filterSavedBookMarks)
-          const unSavedBlog = await axios.delete(`${baseURL}/deleteBookMark/${bloguuid}/${user.userUuid}`);
+          const unSavedBlog = await axios.delete(`${import.meta.env.VITE_baseURL}deleteBookMark/${bloguuid}/${user.userUuid}`);
 
         } catch (error) {
           console.error("error while fetching", error);
@@ -205,7 +206,7 @@ const PostedBlog = ({ sendBlogsData }) => {
             ...prevState,
             bloguuid
           ])
-          const saveBlogs = await axios.post(`${baseURL}/bookMarks`, { savedbloguuid: bloguuid, useruuid: user.userUuid });
+          const saveBlogs = await axios.post(`${import.meta.env.VITE_baseURL}saveBookMarks`, { savedbloguuid: bloguuid, useruuid: user.userUuid });
 
         } catch (error) {
           console.error("error while fetching ", error);
@@ -230,7 +231,7 @@ const PostedBlog = ({ sendBlogsData }) => {
           ...prevState,
           bloguuid,
         ])
-        const response = await axios.post(`${baseURL}/blogLiked`, { bloguuid: bloguuid, useruuid: user.userUuid });
+        const response = await axios.post(`${import.meta.env.VITE_baseURL}likedBlog`, { bloguuid: bloguuid, useruuid: user.userUuid });
         console.log(response, "Error in try");
 
       } catch (error) {
@@ -243,7 +244,7 @@ const PostedBlog = ({ sendBlogsData }) => {
       const filterLikes = isBlogLiked.filter((bloguuid) => bloguuid !== id);
       try {
         setBlogLike(filterLikes);
-        const unLike = await axios.delete(`${baseURL}/deleteBlog/${bloguuid}/${user.userUuid}`);
+        const unLike = await axios.delete(`${import.meta.env.VITE_baseURL}deleteBlog/${bloguuid}/${user.userUuid}`);
         console.log(unLike, "Error in try");
 
       } catch (error) {

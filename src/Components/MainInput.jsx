@@ -4,7 +4,7 @@ import Shimmer from "./Shimmer";
 import PostedBlog from "./PostedBlog";
 import { useLocation } from "react-router-dom";
 import fetchBlogs from "../fetchBlogs";
-import { baseURL } from "../URL";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
@@ -34,7 +34,7 @@ function MainInput() {
   useEffect(() => {
     const handleFetchSavedBlogs = async () => {
       if (location.pathname === "/blogs/bookmarks") {
-        const getSavedBlogsData = await axios.post(`${baseURL}/getBookMarksBlogs`, { useruuid: user.userUuid });
+        const getSavedBlogsData = await axios.post(`${import.meta.env.VITE_baseURL}getBookMarksBlogs`, { useruuid: user.userUuid });
 
         const BlogsDataFromBE = getSavedBlogsData.data.data
         savedBlogs(BlogsDataFromBE);
@@ -57,6 +57,7 @@ function MainInput() {
 
   let displayBlogs;
   if (location.pathname === "/blogs/bookmarks") {
+
     displayBlogs = savedBlogsData;
   } else {
     displayBlogs = blogs
@@ -80,7 +81,7 @@ function MainInput() {
       useruuid: user.userUuid,
     };
     try {
-      const response = await axios.post(`${baseURL}/blogs`, newBlogData);
+      const response = await axios.post(`${import.meta.env.VITE_baseURL}createBlog`, newBlogData);
       const newBlogObject = {
         ...newBlogData,
         bloguuid: response?.data?.blogid,

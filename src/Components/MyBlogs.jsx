@@ -1,12 +1,12 @@
 import BlogContext from "../Store/StoreInput";
 import { useContext, useEffect, useState } from "react";
-
+import React from "react";
 
 function MyBlogs() {
-  const { user , blogs } = useContext(BlogContext);
+  const { user, blogs } = useContext(BlogContext);
 
- 
-  
+
+
   // const [MyblogsData, setBlogsData] = useState([]);
 
   // function fetchBlogsData() {
@@ -19,7 +19,7 @@ function MyBlogs() {
 
   const findMyBlogs = blogs.filter((blog) => blog.useruuid === user.userUuid);
 
-  
+
 
   return (
     <>
@@ -32,12 +32,12 @@ function MyBlogs() {
                 className="w-full h-auto border  mb-2 mt-3 rounded-md  border-black  p-4 "
               >
                 <h1 className="text-lg font-bold font-mono">
-              
+
                   {blog?.usertitle}
                 </h1>
                 <p className=" text-sm font-medium text-gray-600">
                   {" "}
-                
+
                   {blog?.userinput}
                 </p>
               </div>

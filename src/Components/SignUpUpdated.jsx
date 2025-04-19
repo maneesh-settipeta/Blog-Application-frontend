@@ -1,15 +1,17 @@
 import { useForm } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid"; 
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { baseURL } from "../URL";
-import { Navigate, useNavigate } from "react-router-dom";
+import React from "react";
+
+import { useNavigate } from "react-router-dom";
+// import { Auth } from "aws-amplify";
+
 function SignUpUpdated() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setError,
   } = useForm();
 
   const navigate = useNavigate();
@@ -18,66 +20,36 @@ function SignUpUpdated() {
     const { firstName, lastName, Email, password } = data;
     const uuid = uuidv4();
 
-    // try {
-    //   const userCredential = await createUserWithEmailAndPassword(
-    //     auth,
-    //     Email,
-    //     password
-    //   );
-
-    //   const user = userCredential.user;
-    //   const userData = {
-    //     firstName: firstName,
-    //     lastName: lastName,
-    //     email: Email,
-    //     password: password,
-    //     id: user.uid,
-    //     following: [],
-    //     blogLike: [],
-    //     bookmarks: [],
-    //     likedBlog: [],
-    //     savedBlogs: [],
-    //     followingUserDetails: [],
-    //   };
-      
-    //   await setDoc(doc(db, "users", user.uid), userData);
-    // } catch (error) {
-    //   setError("root", {
-    //     type: "manual",
-    //     message: error?.message,
-    //   });
-    //   console.error("Error signing up: ", error);
-    // }
     const userDataToPostGresSql = {
       firstName: firstName,
       lastName: lastName,
       email: Email,
       password: password,
-      userUuid:uuid,
+      userUuid: uuid,
     }
 
-    
+
     try {
-      const response = await axios.post(`${baseURL}/SignUp`, userDataToPostGresSql);
+      const response = await axios.post(`${import.meta.env.VITE_baseURL}SignUp`, userDataToPostGresSql);
       console.log(response);
-      
+
       navigate('/Login')
     } catch (error) {
-      console.error(error,"User Creation Error");
+      console.error(error, "User Creation Error");
     }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="bg-customColor h-screen w-screen">
-       
+
         <div className="flex justify-center ">
-          
+
           <div className="flex flex-col  md:w-1/3 xs:w-fit bg-gray-100 p-4 rounded-md mt-12">
-          <h1 className="text-3xl text-customColor font-medium flex justify-center">
-          Sign-up
-        </h1>
-          
+            <h1 className="text-3xl text-customColor font-medium flex justify-center">
+              Sign-up
+            </h1>
+
             <label className="text-customColor font-medium text-xl">
               First Name
             </label>
@@ -135,18 +107,18 @@ function SignUpUpdated() {
               <p className="text-red-500  text-sm">{errors.root.message}</p>
             )}
             <div className="flex justify-end">
-            <input
-              type="submit"
-             className="bg-customcolorred p-2 text-white/80 text-lg mt-5 hover:font-medium  rounded-md hover:text-black hover:shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out"
-            />
+              <input
+                type="submit"
+                className="bg-customcolorred p-2 text-white/80 text-lg mt-5 hover:font-medium  rounded-md hover:text-black hover:shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 ease-in-out"
+              />
             </div>
             <div className="flex justify-center mt-5">
-          <Link to="/Login">
-            <button className="text-base mt-2 font-medium text-customColor  underline">
-              Already have an Account? Sign-In Here
-            </button>
-          </Link>
-        </div>
+              <Link to="/Login">
+                <button className="text-base mt-2 font-medium text-customColor  underline">
+                  Already have an Account? Sign-In Here
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

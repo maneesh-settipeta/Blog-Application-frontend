@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import BlogContext from "../Store/StoreInput";
-
+import React from "react";
 function ReplyDiscription({ sendId, sendBlogRepliesButtonStatus }) {
 
 
@@ -18,12 +18,12 @@ function ReplyDiscription({ sendId, sendBlogRepliesButtonStatus }) {
                 className=" border-2 border-gray-300 xs:ml-3 mr-4 rounded-md mb-2 p-2"
               >
                 <div className="flex">
-                <p className=" text-customcolorred mr-2 text-sm">
-                  {eachReplyData?.fullname}
-                </p>
-                <p className=" text-customColor mr-2 text-sm">
-                  {eachReplyData?.created_at.split(' ')[0]}
-                </p>
+                  <p className=" text-customcolorred mr-2 text-sm">
+                    {eachReplyData?.fullname}
+                  </p>
+                  <p className=" text-customColor mr-2 text-sm">
+                    {eachReplyData?.created_at.split(' ')[0]}
+                  </p>
                 </div>
                 <p className="p-1 font-medium text-gray-500 line-clamp-5 text-ellipsis">
                   {eachReplyData?.repliedinput}

@@ -1,6 +1,7 @@
 import { createContext, useReducer, useContext } from "react";
 // import { auth } from "../firebase";
 // import fetchBlogs from "../fetchBlogs";
+import React from "react";
 
 const initialState = {
   blogs: [],
@@ -45,6 +46,7 @@ function projectBlogUseReducer(state, action) {
       blogs: action.blogDetails,
     };
   }
+
   if (action.type === "SET-USER") {
     localStorage.setItem("firstName", action.userData.firstname);
     localStorage.setItem("lastName", action.userData.lastname);

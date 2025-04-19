@@ -4,14 +4,14 @@ import UserInfo from "./UserInfo";
 import MyBlogs from "./MyBlogs";
 import MySavedBlogs from "./MySavedBlogs";
 import axios from "axios";
-import { baseURL } from "../URL";
+import React from "react";
 import fetchBlogs from "../fetchBlogs";
 
 function Profile() {
   const { user, bulkBlog } = useContext(BlogContext)
 
   useEffect(() => {
-    // const userData = axios.post(`${baseURL}/getUserDetails`, { useruuid: user.userUuid });
+    // const userData = axios.post(`${import.meta.env.VITE_baseURL}/getUserDetails`, { useruuid: user.userUuid });
     const fetchingAllBlogs = async () => {
       const fetchingBlogs = await fetchBlogs();
       bulkBlog(fetchingBlogs);

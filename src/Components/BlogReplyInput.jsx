@@ -1,7 +1,8 @@
 import { useState, useContext } from "react";
 import BlogContext from "../Store/StoreInput";
 import axios from "axios";
-import { baseURL } from "../URL";
+import React from "react";
+
 
 function BlogReplyInput({ sendOnClick, replyOnClick, bloguuid }) {
   const { addReplies, user } = useContext(BlogContext);
@@ -33,7 +34,7 @@ function BlogReplyInput({ sendOnClick, replyOnClick, bloguuid }) {
     };
     let updatedReplyObject;
     try {
-      const response = await axios.post(`${baseURL}/replies`, replyObject);
+      const response = await axios.post(`${import.meta.env.VITE_baseURL}addReplies`, replyObject);
       updatedReplyObject = {
         repliedinput: replyInputState.repliedinput,
         fullname: replyInputState.fullname,

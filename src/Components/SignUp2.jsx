@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-
+import React from "react";
 function SignUp2() {
   const {
     register,
@@ -7,7 +7,7 @@ function SignUp2() {
     formState: { errors },
   } = useForm();
   return (
-    <form onSubmit={handleSubmit((data) => {})}>
+    <form onSubmit={handleSubmit((data) => { })}>
       <div className=" bg-customColor h-screen w-screen  ">
         <h1 className="text-3xl text-white font-sans  flex justify-center pt-5 pb-10">
           Sign-up
