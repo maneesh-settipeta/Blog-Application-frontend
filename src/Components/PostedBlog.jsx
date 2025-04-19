@@ -44,7 +44,7 @@ const PostedBlog = ({ sendBlogsData }) => {
   useEffect(() => {
     const fetchLikesData = async () => {
       try {
-        const getLikesData = await axios.post(`${import.meta.env.VITE_baseURL}likes`, { useruuid: user.userUuid });
+        const getLikesData = await axios.post(`${import.meta.env.VITE_baseURL}getLikes`, { useruuid: user.userUuid });
         const setLikesToArray = getLikesData.data.data;
         const onlyValues = setLikesToArray.map(eachValue => Object.values(eachValue)[0]);
         setBlogLike(onlyValues);
@@ -59,7 +59,7 @@ const PostedBlog = ({ sendBlogsData }) => {
   useEffect(() => {
     const fetchBookMarksData = async () => {
       try {
-        const getBookMarks = await axios.get(`${import.meta.env.VITE_baseURL}saveBookMarks`, { useruuid: user.userUuid });
+        const getBookMarks = await axios.post(`${import.meta.env.VITE_baseURL}getBookMarks`, { useruuid: user.userUuid });
         const setBookMarksToArray = getBookMarks.data.data;
         const onlyValues = setBookMarksToArray.map(eachValue => Object.values(eachValue)[0]);
         setBookMark(onlyValues)
@@ -75,7 +75,7 @@ const PostedBlog = ({ sendBlogsData }) => {
   useEffect(() => {
     const fetchFollowers = async () => {
       try {
-        const getFollowers = await axios.get(`${import.meta.env.VITE_baseURL}followers`, { useruuid: user.userUuid });
+        const getFollowers = await axios.post(`${import.meta.env.VITE_baseURL}getFollowers`, { useruuid: user.userUuid });
         const setFollowers = getFollowers.data.data;
         const onlyValues = setFollowers.map((eachValue) => Object.values(eachValue)[0]);
         setFollowing(onlyValues);
@@ -85,6 +85,7 @@ const PostedBlog = ({ sendBlogsData }) => {
     };
     fetchFollowers();
   }, []);
+
 
   const handleShowInput = (id) => {
     setCurrentState((prevState) => ({

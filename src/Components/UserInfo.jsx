@@ -11,8 +11,7 @@ function UserInfo() {
 
   useEffect(() => {
     const getFollowingData = async () => {
-      const response = await axios.post(`${import.meta.env.VITE_baseURL}followers`, { loggedinuseruuid: user.userUuid })
-
+      const response = await axios.post(`${import.meta.env.VITE_baseURL}getFollowers`, { useruuid: user.userUuid })
       const followingDetails = response.data.blogs
       followingDetails.forEach((eachFollowing) => {
         setfollowingUserDetails([...followingUserDetails, eachFollowing])
